@@ -43,7 +43,7 @@ public class ExampleServerDstu3IT {
 	static {
 		HapiProperties.forceReload();
 		HapiProperties.setProperty(HapiProperties.FHIR_VERSION, "DSTU3");
-		HapiProperties.setProperty(HapiProperties.DATASOURCE_URL, "jdbc:derby:memory:dbr3;create=true");
+		HapiProperties.setProperty(HapiProperties.DATASOURCE_URL, "jdbc:postgresql://localhost:5432/fhirdb");
 		HapiProperties.setProperty(HapiProperties.TEST_PORT, Integer.toString(PortUtil.findFreePort()));
 		HapiProperties.setProperty(HapiProperties.SUBSCRIPTION_WEBSOCKET_ENABLED, "true");
 		ourCtx = FhirContext.forDstu3();

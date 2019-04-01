@@ -43,7 +43,7 @@ public class ExampleServerR4IT {
 
     static {
         HapiProperties.forceReload();
-        HapiProperties.setProperty(HapiProperties.DATASOURCE_URL, "jdbc:derby:memory:dbr4;create=true");
+        HapiProperties.setProperty(HapiProperties.DATASOURCE_URL, "jdbc:postgresql://localhost:5432/fhirdb");
         HapiProperties.setProperty(HapiProperties.FHIR_VERSION, "R4");
         HapiProperties.setProperty(HapiProperties.TEST_PORT, Integer.toString(PortUtil.findFreePort()));
         HapiProperties.setProperty(HapiProperties.SUBSCRIPTION_WEBSOCKET_ENABLED, "true");

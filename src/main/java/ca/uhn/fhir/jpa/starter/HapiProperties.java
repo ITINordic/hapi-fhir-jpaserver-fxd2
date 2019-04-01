@@ -222,7 +222,7 @@ public class HapiProperties {
     }
 
     public static String getDataSourceDriver() {
-        return HapiProperties.getProperty(DATASOURCE_DRIVER, "org.apache.derby.jdbc.EmbeddedDriver");
+        return HapiProperties.getProperty(DATASOURCE_DRIVER, "org.postgresql.Driver");
     }
 
     public static Integer getDataSourceMaxPoolSize() {
@@ -230,7 +230,7 @@ public class HapiProperties {
     }
 
     public static String getDataSourceUrl() {
-        return HapiProperties.getProperty(DATASOURCE_URL, "jdbc:derby:directory:target/jpaserver_derby_files;create=true");
+        return HapiProperties.getProperty(DATASOURCE_URL, "jdbc:postgresql://localhost:5432/fhirdb");
     }
 
     public static String getDataSourceUsername() {
