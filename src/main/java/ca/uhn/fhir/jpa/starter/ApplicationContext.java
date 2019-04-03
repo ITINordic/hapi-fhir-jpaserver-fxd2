@@ -21,6 +21,8 @@ public class ApplicationContext extends AnnotationConfigWebApplicationContext {
             register(ca.uhn.fhir.jpa.config.WebsocketDispatcherConfig.class);
         }
 
+        register(ca.uhn.fhir.jpa.starter.config.SecSecurityConfig.class);
+
     }
 
 }
