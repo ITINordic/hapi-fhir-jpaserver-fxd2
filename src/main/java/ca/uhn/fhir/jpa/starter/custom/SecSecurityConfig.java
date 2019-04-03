@@ -45,6 +45,8 @@ public class SecSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticated()
                 .antMatchers("/about")
                 .authenticated()
+                .antMatchers("/search")
+                .authenticated()
                 .antMatchers("**/fhir/**")
                 .permitAll()
                 .and()
