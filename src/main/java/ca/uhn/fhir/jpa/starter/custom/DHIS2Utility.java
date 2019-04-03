@@ -41,11 +41,11 @@ public class DHIS2Utility {
         if (entity != null) {
             try (InputStream instream = entity.getContent()) {
                 content = IOUtils.toString(instream, "UTF-8");
-                System.out.println("Sage Content=" + content);
+                System.out.println("DHIS2 Content=" + content);
             }
         }
         int statusCode = response.getStatusLine().getStatusCode();
-        System.out.println("Sage StatusCode=" + statusCode);
+        System.out.println("DHIS2 StatusCode=" + statusCode);
         if (statusCode == 401) {
             throw new UnauthorizedApiException(String.valueOf(statusCode), content);
         } else if (statusCode >= 300) {
