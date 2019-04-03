@@ -1,8 +1,10 @@
 package ca.uhn.fhir.jpa.starter.config;
 
+import ca.uhn.fhir.jpa.starter.custom.DHIS2AuthenticationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -19,15 +21,19 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class SecSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private DHIS2AuthenticationProvider dhis2AuthenticationProvider;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication()
+        /*auth.inMemoryAuthentication()
                 .passwordEncoder(passwordEncoder)
                 .withUser("user").password(passwordEncoder.encode("123456")).roles("USER")
                 .and()
-                .withUser("admin").password(passwordEncoder.encode("123456")).roles("USER", "ADMIN");
+                .withUser("admin").password(passwordEncoder.encode("123456")).roles("USER", "ADMIN");*/
+        auth.authenticationProvider(dhis2AuthenticationProvider);
+        
     }
 
     @Bean
@@ -56,5 +62,10 @@ public class SecSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .csrf()
                 .disable();
+    }
+
+    @Bean
+    public DHIS2AuthenticationProvider dhis2AuthenticationProvider() {
+        return new DHIS2AuthenticationProvider();
     }
 }
