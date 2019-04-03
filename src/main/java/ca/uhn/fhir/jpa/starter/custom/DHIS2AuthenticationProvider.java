@@ -1,5 +1,6 @@
 package ca.uhn.fhir.jpa.starter.custom;
 
+import ca.uhn.fhir.jpa.starter.HapiProperties;
 import java.io.IOException;
 import java.util.ArrayList;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -20,7 +21,7 @@ public class DHIS2AuthenticationProvider implements AuthenticationProvider {
 
         String name = authentication.getName();
         String password = authentication.getCredentials().toString();
-        String url = "https://dev.itin.africa/frism/api/me";
+        String url = HapiProperties.getCustomDhis2BaseUrl()+"/api/me";
         boolean loggedIn = false;
         try {
             DHIS2Utility.httpGet(url, name, password);

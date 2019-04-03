@@ -11,6 +11,7 @@ import java.io.FileInputStream;
 import java.util.Properties;
 
 public class HapiProperties {
+
     static final String ALLOW_EXTERNAL_REFERENCES = "allow_external_references";
     static final String ALLOW_MULTIPLE_DELETE = "allow_multiple_delete";
     static final String ALLOW_PLACEHOLDER_REFERENCES = "allow_placeholder_references";
@@ -47,6 +48,7 @@ public class HapiProperties {
     static final String ALLOW_CONTAINS_SEARCHES = "allow_contains_searches";
     static final String ALLOW_OVERRIDE_DEFAULT_SEARCH_PARAMS = "allow_override_default_search_params";
     static final String EMAIL_FROM = "email.from";
+    static final String CUSTOM_DHIS_BASE_URL = "custom.dhis.base_url";
 
     private static Properties properties;
 
@@ -59,8 +61,8 @@ public class HapiProperties {
     }
 
     /**
-     * This is mostly here for unit tests. Use the actual properties file
-     * to set values
+     * This is mostly here for unit tests. Use the actual properties file to set
+     * values
      */
     @VisibleForTesting
     public static void setProperty(String theKey, String theValue) {
@@ -70,7 +72,7 @@ public class HapiProperties {
     public static Properties getProperties() {
         if (properties == null) {
             // Load the configurable properties file
-            try (InputStream in = HapiProperties.class.getClassLoader().getResourceAsStream(HAPI_PROPERTIES)){
+            try (InputStream in = HapiProperties.class.getClassLoader().getResourceAsStream(HAPI_PROPERTIES)) {
                 HapiProperties.properties = new Properties();
                 HapiProperties.properties.load(in);
             } catch (Exception e) {
@@ -78,8 +80,8 @@ public class HapiProperties {
             }
 
             Properties overrideProps = loadOverrideProperties();
-            if(overrideProps != null) {
-              properties.putAll(overrideProps);
+            if (overrideProps != null) {
+                properties.putAll(overrideProps);
             }
         }
 
@@ -87,19 +89,22 @@ public class HapiProperties {
     }
 
     /**
-     * If a configuration file path is explicitly specified via -Dhapi.properties=<path>, the properties there will
-     * be used to override the entries in the default hapi.properties file (currently under WEB-INF/classes)
-     * @return properties loaded from the explicitly specified configuraiton file if there is one, or null otherwise.
+     * If a configuration file path is explicitly specified via
+     * -Dhapi.properties=<path>, the properties there will be used to override
+     * the entries in the default hapi.properties file (currently under
+     * WEB-INF/classes)
+     *
+     * @return properties loaded from the explicitly specified configuraiton
+     * file if there is one, or null otherwise.
      */
     private static Properties loadOverrideProperties() {
         String confFile = System.getProperty(HAPI_PROPERTIES);
-        if(confFile != null) {
+        if (confFile != null) {
             try {
                 Properties props = new Properties();
                 props.load(new FileInputStream(confFile));
                 return props;
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 throw new ConfigurationException("Could not load HAPI properties file: " + confFile, e);
             }
         }
@@ -328,6 +333,11 @@ public class HapiProperties {
     public static String getEmailPassword() {
         return HapiProperties.getProperty("email.password");
     }
+    
+    public static String getCustomDhis2BaseUrl() {
+        return HapiProperties.getProperty("custom.dhis.base_url");
+    }
+
 
     public static Long getReuseCachedSearchResultsMillis() {
         String value = HapiProperties.getProperty(REUSE_CACHED_SEARCH_RESULTS_MILLIS, "-1");
