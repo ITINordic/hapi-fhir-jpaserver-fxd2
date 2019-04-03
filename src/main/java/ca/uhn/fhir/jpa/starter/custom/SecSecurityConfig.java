@@ -1,10 +1,8 @@
 package ca.uhn.fhir.jpa.starter.custom;
 
-import ca.uhn.fhir.jpa.starter.custom.DHIS2AuthenticationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -19,14 +17,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 @EnableWebSecurity
 public class SecSecurityConfig extends WebSecurityConfigurerAdapter {
-    
+
     @Autowired
     private DHIS2AuthenticationProvider dhis2AuthenticationProvider;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-      auth.authenticationProvider(dhis2AuthenticationProvider);
-        
+        auth.authenticationProvider(dhis2AuthenticationProvider);
+
     }
 
     @Bean
@@ -46,6 +44,12 @@ public class SecSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/about")
                 .authenticated()
                 .antMatchers("/search")
+                .authenticated()
+                .antMatchers("/resource")
+                .authenticated()
+                .antMatchers("/history-server")
+                .authenticated()
+                .antMatchers("/transaction")
                 .authenticated()
                 .antMatchers("**/fhir/**")
                 .permitAll()
