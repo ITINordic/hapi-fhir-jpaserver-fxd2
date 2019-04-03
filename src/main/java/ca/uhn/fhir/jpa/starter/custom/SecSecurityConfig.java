@@ -1,4 +1,4 @@
-package ca.uhn.fhir.jpa.starter.config;
+package ca.uhn.fhir.jpa.starter.custom;
 
 import ca.uhn.fhir.jpa.starter.custom.DHIS2AuthenticationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,20 +19,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 @EnableWebSecurity
 public class SecSecurityConfig extends WebSecurityConfigurerAdapter {
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    
     @Autowired
     private DHIS2AuthenticationProvider dhis2AuthenticationProvider;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        /*auth.inMemoryAuthentication()
-                .passwordEncoder(passwordEncoder)
-                .withUser("user").password(passwordEncoder.encode("123456")).roles("USER")
-                .and()
-                .withUser("admin").password(passwordEncoder.encode("123456")).roles("USER", "ADMIN");*/
-        auth.authenticationProvider(dhis2AuthenticationProvider);
+      auth.authenticationProvider(dhis2AuthenticationProvider);
         
     }
 
