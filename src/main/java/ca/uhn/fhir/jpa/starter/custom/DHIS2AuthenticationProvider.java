@@ -9,7 +9,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 
-
 /**
  *
  * @author Charles Chigoriwa
@@ -21,10 +20,11 @@ public class DHIS2AuthenticationProvider implements AuthenticationProvider {
 
         String name = authentication.getName();
         String password = authentication.getCredentials().toString();
-        String url = HapiProperties.getCustomDhis2BaseUrl()+"/api/me";
+        String basicAuthorization = GeneralUtility.getBasicAuthorization(name, password);
+        String url = HapiProperties.getCustomDhis2BaseUrl() + "/api/me";
         boolean loggedIn = false;
         try {
-            DHIS2Utility.httpGet(url, GeneralUtility.getBasicAuthorization(name, password));
+            DHIS2Utility.httpGet(url, basicAuthorization);
             loggedIn = true;
         } catch (IOException ex) {
             throw new FrismException(ex);
@@ -42,6 +42,6 @@ public class DHIS2AuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public boolean supports(Class<?> authentication) {
-       return (UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication));
+        return (UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication));
     }
 }
