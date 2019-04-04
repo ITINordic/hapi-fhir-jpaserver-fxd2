@@ -35,14 +35,10 @@ public class SecSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/login")
+                .antMatchers("/login","**/fhir/**")
                 .permitAll()
-                .antMatchers("/")
-                .authenticated()
-                .antMatchers("/home","/about","/search","/resource","/history-server","/transaction")
-                .authenticated()               
-                .antMatchers("**/fhir/**")
-                .permitAll()
+                .antMatchers("/","/home","/about","/search","/resource","/history-server","/transaction")
+                .authenticated() 
                 .and()
                 .formLogin()
                 .defaultSuccessUrl("/")
