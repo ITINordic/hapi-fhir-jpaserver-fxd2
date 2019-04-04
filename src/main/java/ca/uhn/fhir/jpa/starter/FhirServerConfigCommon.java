@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import ca.uhn.fhir.jpa.dao.DaoConfig;
+import ca.uhn.fhir.jpa.starter.custom.DHIS2AuthInterceptor;
 import ca.uhn.fhir.rest.server.interceptor.IServerInterceptor;
 import ca.uhn.fhir.rest.server.interceptor.LoggingInterceptor;
 import ca.uhn.fhir.rest.server.interceptor.ResponseHighlighterInterceptor;
@@ -186,4 +187,12 @@ public class FhirServerConfigCommon {
 
 		return null;
 	}
+        
+        //Custom DHIS2 OAuth2 Interceptor
+        @Bean(autowire=Autowire.BY_TYPE)
+	public IServerInterceptor dhis2AuthInterceptor() {
+		DHIS2AuthInterceptor interceptor=new DHIS2AuthInterceptor();
+                return interceptor;
+	}
+
 }
