@@ -17,20 +17,19 @@ import org.apache.http.impl.client.HttpClients;
  */
 public class DHIS2Utility {
 
-    public static String httpPost(String url, String body, String username, String password) throws UnsupportedEncodingException, IOException {
+    public static String httpPost(String url, String body,String authorization) throws UnsupportedEncodingException, IOException {
         HttpClient httpClient = HttpClients.createDefault();
         HttpPost httppost = new HttpPost(url);
-        httppost.addHeader("Authorization", GeneralUtility.getBasicAuthorization(username, password));
-        //httppost.addHeader("Content-Type", "application/json");
+        httppost.addHeader("Authorization", authorization);
         httppost.setEntity(new StringEntity(body, "UTF-8"));
         HttpResponse response = httpClient.execute(httppost);
         return parseStringContent(response);
     }
 
-    public static String httpGet(String url, String username, String password) throws UnsupportedEncodingException, IOException {
+    public static String httpGet(String url, String authorization) throws UnsupportedEncodingException, IOException {
         HttpClient httpClient = HttpClients.createDefault();
         HttpGet httpGet = new HttpGet(url);
-        httpGet.addHeader("Authorization", GeneralUtility.getBasicAuthorization(username, password));
+        httpGet.addHeader("Authorization",authorization);
         HttpResponse response = httpClient.execute(httpGet);
         return parseStringContent(response);
     }

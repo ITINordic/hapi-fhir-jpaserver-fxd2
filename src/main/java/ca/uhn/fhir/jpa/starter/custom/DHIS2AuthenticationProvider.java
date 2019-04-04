@@ -24,7 +24,7 @@ public class DHIS2AuthenticationProvider implements AuthenticationProvider {
         String url = HapiProperties.getCustomDhis2BaseUrl()+"/api/me";
         boolean loggedIn = false;
         try {
-            DHIS2Utility.httpGet(url, name, password);
+            DHIS2Utility.httpGet(url, GeneralUtility.getBasicAuthorization(name, password));
             loggedIn = true;
         } catch (IOException ex) {
             throw new FrismException(ex);

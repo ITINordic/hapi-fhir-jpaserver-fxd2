@@ -14,9 +14,13 @@ public class DHIS2AuthInterceptor extends AuthorizationInterceptor {
 
     @Override
     public List<IAuthRule> buildRuleList(RequestDetails theRequestDetails) {
+        boolean authorized = true;
         String bearertoken = theRequestDetails.getHeader("Authorization");
-        String token = bearertoken.split(" ")[1];
-        if (checkToken(token)) {
+        if (bearertoken != null) {
+            String token = bearertoken.split(" ")[1];
+            authorized = checkToken(token);
+        }
+        if (authorized) {
             return new RuleBuilder()
                     .allowAll()
                     .build();
@@ -27,8 +31,8 @@ public class DHIS2AuthInterceptor extends AuthorizationInterceptor {
         }
 
     }
-    
-    private boolean checkToken(String token){
+
+    private boolean checkToken(String token) {
         return true;
     }
 
