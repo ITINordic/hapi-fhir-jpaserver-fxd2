@@ -11,6 +11,10 @@ public class GeneralUtility {
     public static String getBasicAuthorization(String username, String password) {
         return "Basic " + Base64.getEncoder().encodeToString((username + ":" + password).getBytes());
     }
+    
+    public static String getBearerAuthorization(String token) {
+        return "Basic " + token;
+    }
 
     public static String toBase64String(byte[] bytes) {
         return Base64.getEncoder().encodeToString(bytes);
