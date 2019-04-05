@@ -44,4 +44,8 @@ public class DHIS2AuthenticationProvider implements AuthenticationProvider {
     public boolean supports(Class<?> authentication) {
         return (UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication));
     }
+    
+    private DHIS2TokenWrapper getDHIS2TokenWrapper(String username,String password){
+        return null;
+    }
 }
