@@ -5,6 +5,7 @@ import ca.uhn.fhir.rest.server.interceptor.auth.AuthorizationInterceptor;
 import ca.uhn.fhir.rest.server.interceptor.auth.IAuthRule;
 import ca.uhn.fhir.rest.server.interceptor.auth.RuleBuilder;
 import java.util.List;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
@@ -15,14 +16,13 @@ public class DHIS2AuthInterceptor extends AuthorizationInterceptor {
 
     @Override
     public List<IAuthRule> buildRuleList(RequestDetails theRequestDetails) {
-        boolean authorized = false;
+        boolean authorized;
         String bearertoken = theRequestDetails.getHeader("Authorization");
         if (bearertoken != null) {
             String token = bearertoken.split(" ")[1];
             authorized = checkToken(token);
         } else {
-            //For already logged in user
-            authorized = SecurityContextHolder.getContext().getAuthentication() != null;
+            authorized = true /*isLoggedIn()*/;
         }
         if (authorized) {
             return new RuleBuilder()
@@ -37,7 +37,15 @@ public class DHIS2AuthInterceptor extends AuthorizationInterceptor {
     }
 
     private boolean checkToken(String token) {
-        return true;
+        return false;
+    }
+
+    private boolean isLoggedIn() {
+        return SecurityContextHolder.getContext().getAuthentication() != null
+                && SecurityContextHolder.getContext().getAuthentication().isAuthenticated()
+                && //when Anonymous Authentication is enabled
+                !(SecurityContextHolder.getContext().getAuthentication() instanceof AnonymousAuthenticationToken);
+
     }
 
 }

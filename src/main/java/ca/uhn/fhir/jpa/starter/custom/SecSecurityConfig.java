@@ -24,14 +24,15 @@ public class SecSecurityConfig extends WebSecurityConfigurerAdapter {
         auth.authenticationProvider(dhis2AuthenticationProvider);
 
     }
-    
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-                .antMatchers("/login","**/fhir/**","**/sadombo/**")
+        http.anonymous().disable()
+                .authorizeRequests()
+                .antMatchers("/login", "**/fhir/**", "**/sadombo/**")
                 .permitAll()
-                .antMatchers("/","/home","/about","/search","/resource","/history-server","/transaction")
-                .authenticated() 
+                .antMatchers("/", "/home", "/about", "/search", "/resource", "/history-server", "/transaction")
+                .authenticated()
                 .and()
                 .formLogin()
                 .defaultSuccessUrl("/")

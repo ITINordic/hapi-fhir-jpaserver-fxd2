@@ -15,5 +15,9 @@ public class GeneralUtility {
     public static String toBase64String(byte[] bytes) {
         return Base64.getEncoder().encodeToString(bytes);
     }
+    
+    public static boolean isEmpty(String string){
+        return string==null || string.trim().isEmpty();
+    }
 
 }

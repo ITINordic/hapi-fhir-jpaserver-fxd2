@@ -333,11 +333,22 @@ public class HapiProperties {
     public static String getEmailPassword() {
         return HapiProperties.getProperty("email.password");
     }
-    
+
     public static String getCustomDhis2BaseUrl() {
         return HapiProperties.getProperty("custom.dhis.base_url");
     }
 
+    public static String getCustomDhis2ClientCid() {
+        return HapiProperties.getProperty("custom.dhis.client.cid");
+    }
+
+    public static String getCustomDhis2ClientSecret() {
+        return HapiProperties.getProperty("custom.dhis.client.secret");
+    }
+
+    public static String getCustomDhis2ClientUid() {
+        return HapiProperties.getProperty("custom.dhis.client.uid");
+    }
 
     public static Long getReuseCachedSearchResultsMillis() {
         String value = HapiProperties.getProperty(REUSE_CACHED_SEARCH_RESULTS_MILLIS, "-1");
