@@ -28,7 +28,7 @@ public class SecSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/login","**/fhir/**")
+                .antMatchers("/login","**/fhir/**","**/sadombo/**")
                 .permitAll()
                 .antMatchers("/","/home","/about","/search","/resource","/history-server","/transaction")
                 .authenticated() 
