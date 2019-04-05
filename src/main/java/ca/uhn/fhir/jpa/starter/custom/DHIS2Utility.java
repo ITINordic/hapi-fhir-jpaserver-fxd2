@@ -45,7 +45,7 @@ public class DHIS2Utility {
         }
         int statusCode = response.getStatusLine().getStatusCode();
         System.out.println("DHIS2 StatusCode=" + statusCode);
-        if (statusCode == 401) {
+        if (statusCode == 401 || statusCode == 403) {
             throw new UnauthorizedApiException(String.valueOf(statusCode), content);
         } else if (statusCode >= 300) {
             throw new ApiException(String.valueOf(statusCode), content);
