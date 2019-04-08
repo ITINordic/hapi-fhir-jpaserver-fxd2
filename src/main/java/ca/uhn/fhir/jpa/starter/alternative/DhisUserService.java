@@ -1,4 +1,4 @@
-package ca.uhn.fhir.jpa.starter.oslo;
+package ca.uhn.fhir.jpa.starter.alternative;
 
 import java.util.Objects;
 import javax.annotation.Nonnull;

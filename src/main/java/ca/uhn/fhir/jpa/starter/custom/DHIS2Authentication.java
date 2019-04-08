@@ -10,9 +10,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 /**
  *
- * @author developer
+ * @author Charles Chigoriwa
  */
-public class FrismAuthentication implements Authentication {
+public class DHIS2Authentication implements Authentication {
 
     private Collection<? extends GrantedAuthority> authorities;
     private Object credentials;
@@ -20,6 +20,7 @@ public class FrismAuthentication implements Authentication {
     private Object Principal;
     private boolean authenticated;
     private String name;
+    private DHIS2TokenWrapper dhis2TokenWrapper;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -76,14 +77,23 @@ public class FrismAuthentication implements Authentication {
         this.name = name;
     }
 
-    public static FrismAuthentication valueOf(String accessToken, String refreshToken) {
-        String username = accessToken + ":" + refreshToken;
-        FrismAuthentication auth = new FrismAuthentication();
+    public DHIS2TokenWrapper getDhis2TokenWrapper() {
+        return dhis2TokenWrapper;
+    }
+
+    public void setDhis2TokenWrapper(DHIS2TokenWrapper dhis2TokenWrapper) {
+        this.dhis2TokenWrapper = dhis2TokenWrapper;
+    }
+
+    public static DHIS2Authentication valueOf(DHIS2TokenWrapper dhis2TokenWrapper) {
+        String username = dhis2TokenWrapper.getAccessToken() + ":" + dhis2TokenWrapper.getRefreshToken();
+        DHIS2Authentication auth = new DHIS2Authentication();
         auth.setAuthorities(getDefaultAuthorities());
         auth.setAuthenticated(true);
         auth.setName(username);
         auth.setPrincipal(new BasicUserPrincipal(username));
         auth.setCredentials(username);
+        auth.setDhis2TokenWrapper(dhis2TokenWrapper);
         return auth;
     }
 

@@ -1,5 +1,6 @@
 package ca.uhn.fhir.jpa.starter;
 
+import ca.uhn.fhir.jpa.starter.custom.AuthorizingTesterUiClientFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -44,7 +45,9 @@ public class FhirTesterConfig {
 				.withBaseUrl(HapiProperties.getServerAddress())
 				.withName(HapiProperties.getServerName());
 		retVal.setRefuseToFetchThirdPartyUrls(HapiProperties.getTesterConfigRefustToFetchThirdPartyUrls());
-		return retVal;
+		//Added by Charles Chigoriwa
+                retVal.setClientFactory(new AuthorizingTesterUiClientFactory());
+                return retVal;
 	}
 
 }

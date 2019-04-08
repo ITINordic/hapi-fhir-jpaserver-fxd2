@@ -1,4 +1,4 @@
-package ca.uhn.fhir.jpa.starter.oslo;
+package ca.uhn.fhir.jpa.starter.alternative;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

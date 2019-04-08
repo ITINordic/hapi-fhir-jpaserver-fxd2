@@ -1,4 +1,4 @@
-package ca.uhn.fhir.jpa.starter.oslo;
+package ca.uhn.fhir.jpa.starter.alternative;
 
 import ca.uhn.fhir.rest.api.QualifiedParamList;
 import ca.uhn.fhir.rest.api.RestOperationTypeEnum;

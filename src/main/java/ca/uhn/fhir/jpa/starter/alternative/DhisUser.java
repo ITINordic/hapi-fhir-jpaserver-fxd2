@@ -1,4 +1,4 @@
-package ca.uhn.fhir.jpa.starter.oslo;
+package ca.uhn.fhir.jpa.starter.alternative;
 
 import java.io.Serializable;
 import java.util.List;

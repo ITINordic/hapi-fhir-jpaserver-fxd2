@@ -1,11 +1,17 @@
 package ca.uhn.fhir.jpa.starter.custom;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.Date;
+import org.joda.time.DateTime;
+import org.joda.time.Minutes;
+
 /**
  *
  * @author Charles Chigoriwa
  */
 public class DHIS2TokenWrapper {
-    
+
+    private long creationTime = new Date().getTime();
     private String accessToken;
     private String refreshToken;
     private String tokenType;
@@ -51,7 +57,34 @@ public class DHIS2TokenWrapper {
     public void setExpiresIn(int expiresIn) {
         this.expiresIn = expiresIn;
     }
-    
-    
-    
+
+    public long getCreationTime() {
+        return creationTime;
+    }
+
+    public void setCreationTime(long creationTime) {
+        this.creationTime = creationTime;
+    }
+
+    @JsonIgnore
+    public DateTime getExpiryDateTime() {
+        DateTime creationDateTime = new DateTime(creationTime);
+        DateTime expiryDateTime = creationDateTime.plusSeconds(expiresIn);
+        return expiryDateTime;
+    }
+
+    @JsonIgnore
+    public boolean isExpired() {
+        DateTime expiryDateTime = getExpiryDateTime();
+        return !DateTime.now().isBefore(expiryDateTime);
+    }
+
+    @JsonIgnore
+    public boolean isAboutToExpire() {
+        DateTime expiryDateTime = getExpiryDateTime();
+        DateTime todayDateTime = DateTime.now();
+        int minutesLeft = Minutes.minutesBetween(todayDateTime, expiryDateTime).getMinutes();
+        return minutesLeft <= 3;
+    }
+
 }

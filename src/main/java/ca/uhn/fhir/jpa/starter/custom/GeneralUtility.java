@@ -1,6 +1,8 @@
 package ca.uhn.fhir.jpa.starter.custom;
 
 import java.util.Base64;
+import java.util.Collection;
+import java.util.Map;
 
 /**
  *
@@ -13,7 +15,7 @@ public class GeneralUtility {
     }
     
     public static String getBearerAuthorization(String token) {
-        return "Basic " + token;
+        return "Bearer " + token;
     }
 
     public static String toBase64String(byte[] bytes) {
@@ -22,6 +24,14 @@ public class GeneralUtility {
     
     public static boolean isEmpty(String string){
         return string==null || string.trim().isEmpty();
+    }
+    
+    public static boolean isEmpty(Collection<?> collection){
+        return collection==null || collection.isEmpty();
+    }
+    
+     public static boolean isEmpty(Map<?,?> map){
+        return map==null || map.isEmpty();
     }
 
 }
