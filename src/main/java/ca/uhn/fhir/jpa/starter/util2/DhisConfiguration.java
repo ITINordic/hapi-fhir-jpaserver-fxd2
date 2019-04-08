@@ -1,4 +1,4 @@
-package ca.uhn.fhir.jpa.starter.alternative;
+package ca.uhn.fhir.jpa.starter.util2;
 
 import javax.annotation.Nonnull;
 import org.apache.http.client.HttpClient;

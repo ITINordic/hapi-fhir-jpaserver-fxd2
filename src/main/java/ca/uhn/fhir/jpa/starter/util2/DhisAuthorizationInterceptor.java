@@ -1,4 +1,4 @@
-package ca.uhn.fhir.jpa.starter.alternative;
+package ca.uhn.fhir.jpa.starter.util2;
 
 import ca.uhn.fhir.jpa.rp.dstu3.OrganizationResourceProvider;
 import ca.uhn.fhir.rest.api.RestOperationTypeEnum;
