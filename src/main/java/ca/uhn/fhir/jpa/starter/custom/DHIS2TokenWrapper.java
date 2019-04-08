@@ -1,6 +1,7 @@
 package ca.uhn.fhir.jpa.starter.custom;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.io.Serializable;
 import java.util.Date;
 import org.joda.time.DateTime;
 import org.joda.time.Minutes;
@@ -9,7 +10,7 @@ import org.joda.time.Minutes;
  *
  * @author Charles Chigoriwa
  */
-public class DHIS2TokenWrapper {
+public class DHIS2TokenWrapper implements Serializable{
 
     private long creationTime = new Date().getTime();
     private String accessToken;

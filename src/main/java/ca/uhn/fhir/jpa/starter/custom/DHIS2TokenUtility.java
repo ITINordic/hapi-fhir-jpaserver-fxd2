@@ -9,6 +9,8 @@ import java.util.Map;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
  *
@@ -69,5 +71,26 @@ public class DHIS2TokenUtility {
         tokenWrapper.setScope(jsonObject.getString("scope"));
         tokenWrapper.setExpiresIn(jsonObject.getInt("expires_in"));
         return tokenWrapper;
+    }
+    
+    public static String getAccessTokenFromSecurityContext() {
+        String accessToken = "";
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            if (authentication instanceof DHIS2Authentication) {
+                DHIS2Authentication dhis2Authentication = (DHIS2Authentication) authentication;
+                DHIS2TokenWrapper tokenWrapper = dhis2Authentication.getDhis2TokenWrapper();
+                if (tokenWrapper != null) {
+                    if (tokenWrapper.isExpired() || tokenWrapper.isAboutToExpire()) {
+                        DHIS2TokenWrapper newTokenWrapper = DHIS2TokenUtility.getRefreshedDHIS2TokenWrapper(tokenWrapper.getRefreshToken());
+                        accessToken = newTokenWrapper.getAccessToken();
+                        SecurityContextHolder.getContext().setAuthentication(DHIS2Authentication.valueOf(newTokenWrapper));
+                    } else {
+                        accessToken = tokenWrapper.getAccessToken();
+                    }
+                }
+            }
+        }
+        return accessToken;
     }
 }

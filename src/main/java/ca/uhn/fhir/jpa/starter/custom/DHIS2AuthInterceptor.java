@@ -1,6 +1,7 @@
 package ca.uhn.fhir.jpa.starter.custom;
 
 import ca.uhn.fhir.jpa.starter.HapiProperties;
+import static ca.uhn.fhir.jpa.starter.custom.DHIS2TokenUtility.getAccessTokenFromSecurityContext;
 import ca.uhn.fhir.rest.api.server.RequestDetails;
 import ca.uhn.fhir.rest.server.interceptor.auth.AuthorizationInterceptor;
 import ca.uhn.fhir.rest.server.interceptor.auth.IAuthRule;
@@ -16,11 +17,14 @@ public class DHIS2AuthInterceptor extends AuthorizationInterceptor {
 
     @Override
     public List<IAuthRule> buildRuleList(RequestDetails theRequestDetails) {
-        boolean authorized = false;
+        boolean authorized;
         String bearertoken = theRequestDetails.getHeader("Authorization");
         if (bearertoken != null) {
             String token = bearertoken.split(" ")[1];
             authorized = checkToken(token);
+        } else {
+            String token = getAccessTokenFromSecurityContext();
+            authorized = !GeneralUtility.isEmpty(token);
         }
 
         if (authorized) {
