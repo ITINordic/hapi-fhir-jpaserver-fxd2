@@ -12,7 +12,7 @@ import java.io.FileInputStream;
 import java.util.Properties;
 
 public class HapiProperties {
-    
+
     static final String ALLOW_EXTERNAL_REFERENCES = "allow_external_references";
     static final String ALLOW_MULTIPLE_DELETE = "allow_multiple_delete";
     static final String ALLOW_PLACEHOLDER_REFERENCES = "allow_placeholder_references";
@@ -50,7 +50,7 @@ public class HapiProperties {
     static final String ALLOW_OVERRIDE_DEFAULT_SEARCH_PARAMS = "allow_override_default_search_params";
     static final String EMAIL_FROM = "email.from";
     static final String CUSTOM_DHIS_BASE_URL = "custom.dhis.base_url";
-    
+
     private static Properties properties;
 
     /*
@@ -69,7 +69,7 @@ public class HapiProperties {
     public static void setProperty(String theKey, String theValue) {
         getProperties().setProperty(theKey, theValue);
     }
-    
+
     public static Properties getProperties() {
         if (properties == null) {
             // Load the configurable properties file
@@ -81,22 +81,32 @@ public class HapiProperties {
                 } catch (Exception e) {
                     throw new ConfigurationException("Could not load HAPI properties", e);
                 }
-                
+
             } else {
-                try (InputStream in = HapiProperties.class.getClassLoader().getResourceAsStream(HAPI_PROPERTIES)) {
-                    HapiProperties.properties = new Properties();
-                    HapiProperties.properties.load(in);
-                } catch (Exception e) {
-                    throw new ConfigurationException("Could not load HAPI properties", e);
+                File homePropFile = new File(System.getProperty("user.home") + File.separator + ".hapi-fhir" + File.separator + HAPI_PROPERTIES);
+                if (homePropFile.exists()) {
+                    try (InputStream in = new FileInputStream(etcPropFile)) {
+                        HapiProperties.properties = new Properties();
+                        HapiProperties.properties.load(in);
+                    } catch (Exception e) {
+                        throw new ConfigurationException("Could not load HAPI properties", e);
+                    }
+                } else {
+                    try (InputStream in = HapiProperties.class.getClassLoader().getResourceAsStream(HAPI_PROPERTIES)) {
+                        HapiProperties.properties = new Properties();
+                        HapiProperties.properties.load(in);
+                    } catch (Exception e) {
+                        throw new ConfigurationException("Could not load HAPI properties", e);
+                    }
                 }
             }
-            
+
             Properties overrideProps = loadOverrideProperties();
             if (overrideProps != null) {
                 properties.putAll(overrideProps);
             }
         }
-        
+
         return properties;
     }
 
@@ -120,248 +130,248 @@ public class HapiProperties {
                 throw new ConfigurationException("Could not load HAPI properties file: " + confFile, e);
             }
         }
-        
+
         return null;
     }
-    
+
     private static String getProperty(String propertyName) {
         Properties properties = HapiProperties.getProperties();
-        
+
         if (properties != null) {
             return properties.getProperty(propertyName);
         }
-        
+
         return null;
     }
-    
+
     private static String getProperty(String propertyName, String defaultValue) {
         Properties properties = HapiProperties.getProperties();
-        
+
         if (properties != null) {
             String value = properties.getProperty(propertyName);
-            
+
             if (value != null && value.length() > 0) {
                 return value;
             }
         }
-        
+
         return defaultValue;
     }
-    
+
     private static Boolean getBooleanProperty(String propertyName, Boolean defaultValue) {
         String value = HapiProperties.getProperty(propertyName);
-        
+
         if (value == null || value.length() == 0) {
             return defaultValue;
         }
-        
+
         return Boolean.parseBoolean(value);
     }
-    
+
     private static Integer getIntegerProperty(String propertyName, Integer defaultValue) {
         String value = HapiProperties.getProperty(propertyName);
-        
+
         if (value == null || value.length() == 0) {
             return defaultValue;
         }
-        
+
         return Integer.parseInt(value);
     }
-    
+
     public static FhirVersionEnum getFhirVersion() {
         String fhirVersionString = HapiProperties.getProperty(FHIR_VERSION);
-        
+
         if (fhirVersionString != null && fhirVersionString.length() > 0) {
             return FhirVersionEnum.valueOf(fhirVersionString);
         }
-        
+
         return FhirVersionEnum.DSTU3;
     }
-    
+
     public static ETagSupportEnum getEtagSupport() {
         String etagSupportString = HapiProperties.getProperty(ETAG_SUPPORT);
-        
+
         if (etagSupportString != null && etagSupportString.length() > 0) {
             return ETagSupportEnum.valueOf(etagSupportString);
         }
-        
+
         return ETagSupportEnum.ENABLED;
     }
-    
+
     public static EncodingEnum getDefaultEncoding() {
         String defaultEncodingString = HapiProperties.getProperty(DEFAULT_ENCODING);
-        
+
         if (defaultEncodingString != null && defaultEncodingString.length() > 0) {
             return EncodingEnum.valueOf(defaultEncodingString);
         }
-        
+
         return EncodingEnum.JSON;
     }
-    
+
     public static Boolean getDefaultPrettyPrint() {
         return HapiProperties.getBooleanProperty(DEFAULT_PRETTY_PRINT, true);
     }
-    
+
     public static String getServerAddress() {
         return HapiProperties.getProperty(SERVER_ADDRESS);
     }
-    
+
     public static Integer getDefaultPageSize() {
         return HapiProperties.getIntegerProperty(DEFAULT_PAGE_SIZE, 20);
     }
-    
+
     public static Integer getMaximumPageSize() {
         return HapiProperties.getIntegerProperty(MAX_PAGE_SIZE, 200);
     }
-    
+
     public static Integer getMaximumFetchSize() {
         return HapiProperties.getIntegerProperty(MAX_FETCH_SIZE, Integer.MAX_VALUE);
     }
-    
+
     public static String getPersistenceUnitName() {
         return HapiProperties.getProperty(PERSISTENCE_UNIT_NAME, "HAPI_PU");
     }
-    
+
     public static String getLoggerName() {
         return HapiProperties.getProperty(LOGGER_NAME, "fhirtest.access");
     }
-    
+
     public static String getLoggerFormat() {
         return HapiProperties.getProperty(LOGGER_FORMAT, "Path[${servletPath}] Source[${requestHeader.x-forwarded-for}] Operation[${operationType} ${operationName} ${idOrResourceName}] UA[${requestHeader.user-agent}] Params[${requestParameters}] ResponseEncoding[${responseEncodingNoDefault}]");
     }
-    
+
     public static String getLoggerErrorFormat() {
         return HapiProperties.getProperty(LOGGER_ERROR_FORMAT, "ERROR - ${requestVerb} ${requestUrl}");
     }
-    
+
     public static Boolean getLoggerLogExceptions() {
         return HapiProperties.getBooleanProperty(LOGGER_LOG_EXCEPTIONS, true);
     }
-    
+
     public static String getDataSourceDriver() {
         return HapiProperties.getProperty(DATASOURCE_DRIVER, "org.postgresql.Driver");
     }
-    
+
     public static Integer getDataSourceMaxPoolSize() {
         return HapiProperties.getIntegerProperty(DATASOURCE_MAX_POOL_SIZE, 10);
     }
-    
+
     public static String getDataSourceUrl() {
         return HapiProperties.getProperty(DATASOURCE_URL, "jdbc:postgresql://localhost:5432/fhirdb");
     }
-    
+
     public static String getDataSourceUsername() {
         return HapiProperties.getProperty(DATASOURCE_USERNAME);
     }
-    
+
     public static String getDataSourcePassword() {
         return HapiProperties.getProperty(DATASOURCE_PASSWORD);
     }
-    
+
     public static Boolean getAllowMultipleDelete() {
         return HapiProperties.getBooleanProperty(ALLOW_MULTIPLE_DELETE, false);
     }
-    
+
     public static Boolean getAllowExternalReferences() {
         return HapiProperties.getBooleanProperty(ALLOW_EXTERNAL_REFERENCES, false);
     }
-    
+
     public static Boolean getExpungeEnabled() {
         return HapiProperties.getBooleanProperty("expunge_enabled", true);
     }
-    
+
     public static Integer getTestPort() {
         return HapiProperties.getIntegerProperty(TEST_PORT, 0);
     }
-    
+
     public static Boolean getTesterConfigRefustToFetchThirdPartyUrls() {
         return HapiProperties.getBooleanProperty(TESTER_CONFIG_REFUSE_TO_FETCH_THIRD_PARTY_URLS, false);
     }
-    
+
     public static Boolean getCorsEnabled() {
         return HapiProperties.getBooleanProperty(CORS_ENABLED, true);
     }
-    
+
     public static String getCorsAllowedOrigin() {
         return HapiProperties.getProperty(CORS_ALLOWED_ORIGIN, "*");
     }
-    
+
     public static String getServerBase() {
         return HapiProperties.getProperty(SERVER_BASE, "/fhir");
     }
-    
+
     public static String getServerName() {
         return HapiProperties.getProperty(SERVER_NAME, "Local Tester");
     }
-    
+
     public static String getServerId() {
         return HapiProperties.getProperty(SERVER_ID, "home");
     }
-    
+
     public static Boolean getAllowPlaceholderReferences() {
         return HapiProperties.getBooleanProperty(ALLOW_PLACEHOLDER_REFERENCES, true);
     }
-    
+
     public static Boolean getSubscriptionEmailEnabled() {
         return HapiProperties.getBooleanProperty(SUBSCRIPTION_EMAIL_ENABLED, false);
     }
-    
+
     public static Boolean getSubscriptionRestHookEnabled() {
         return HapiProperties.getBooleanProperty(SUBSCRIPTION_RESTHOOK_ENABLED, false);
     }
-    
+
     public static Boolean getSubscriptionWebsocketEnabled() {
         return HapiProperties.getBooleanProperty(SUBSCRIPTION_WEBSOCKET_ENABLED, false);
     }
-    
+
     public static Boolean getAllowContainsSearches() {
         return HapiProperties.getBooleanProperty(ALLOW_CONTAINS_SEARCHES, true);
     }
-    
+
     public static Boolean getAllowOverrideDefaultSearchParams() {
         return HapiProperties.getBooleanProperty(ALLOW_OVERRIDE_DEFAULT_SEARCH_PARAMS, true);
     }
-    
+
     public static String getEmailFrom() {
         return HapiProperties.getProperty(EMAIL_FROM, "some@test.com");
     }
-    
+
     public static Boolean getEmailEnabled() {
         return HapiProperties.getBooleanProperty("email.enabled", false);
     }
-    
+
     public static String getEmailHost() {
         return HapiProperties.getProperty("email.host");
     }
-    
+
     public static Integer getEmailPort() {
         return HapiProperties.getIntegerProperty("email.port", 0);
     }
-    
+
     public static String getEmailUsername() {
         return HapiProperties.getProperty("email.username");
     }
-    
+
     public static String getEmailPassword() {
         return HapiProperties.getProperty("email.password");
     }
-    
+
     public static String getCustomDhis2BaseUrl() {
         return HapiProperties.getProperty("custom.dhis.base_url");
     }
-    
+
     public static String getCustomDhis2ClientCid() {
         return HapiProperties.getProperty("custom.dhis.client.cid");
     }
-    
+
     public static String getCustomDhis2ClientSecret() {
         return HapiProperties.getProperty("custom.dhis.client.secret");
     }
-    
+
     public static String getCustomDhis2ClientUid() {
         return HapiProperties.getProperty("custom.dhis.client.uid");
     }
-    
+
     public static Long getReuseCachedSearchResultsMillis() {
         String value = HapiProperties.getProperty(REUSE_CACHED_SEARCH_RESULTS_MILLIS, "-1");
         return Long.valueOf(value);
