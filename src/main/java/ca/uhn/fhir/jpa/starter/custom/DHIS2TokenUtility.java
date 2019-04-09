@@ -32,6 +32,12 @@ public class DHIS2TokenUtility {
             return toTokenWrapper(responseBody);
         } catch (IOException ex) {
             throw new FrismException(ex);
+        }catch (ApiException ex) {
+            if (ex.getStatus() != null && ex.getStatus().equals("400")) {
+                throw new UnauthorizedApiException(ex);
+            } else {
+                throw ex;
+            }
         }
     }
 

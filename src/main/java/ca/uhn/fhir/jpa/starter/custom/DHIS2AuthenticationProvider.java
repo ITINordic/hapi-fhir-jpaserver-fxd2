@@ -21,13 +21,7 @@ public class DHIS2AuthenticationProvider implements AuthenticationProvider {
             return DHIS2Authentication.valueOf(tokenWrapper);
         } catch (UnauthorizedApiException ex) {
             throw new BadCredentialsException("DHIS2  authentication failed");
-        } catch (ApiException ex) {
-            if (ex.getStatus() != null && ex.getStatus().equals("400")) {
-                throw new BadCredentialsException("DHIS2  authentication failed");
-            } else {
-                throw ex;
-            }
-        }
+        } 
     }
 
     @Override
