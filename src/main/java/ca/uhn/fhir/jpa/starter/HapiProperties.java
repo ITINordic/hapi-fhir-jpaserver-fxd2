@@ -82,14 +82,14 @@ public class HapiProperties {
                     throw new ConfigurationException("Could not load HAPI properties", e);
                 }
                 
-            } else {
+            } /*else {
                 try (InputStream in = HapiProperties.class.getClassLoader().getResourceAsStream(HAPI_PROPERTIES)) {
                     HapiProperties.properties = new Properties();
                     HapiProperties.properties.load(in);
                 } catch (Exception e) {
                     throw new ConfigurationException("Could not load HAPI properties", e);
                 }
-            }
+            }*/
             
             Properties overrideProps = loadOverrideProperties();
             if (overrideProps != null) {
