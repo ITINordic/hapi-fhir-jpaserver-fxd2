@@ -85,7 +85,7 @@ public class HapiProperties {
             } else {
                 File homePropFile = new File(System.getProperty("user.home") + File.separator + ".hapi-fhir" + File.separator + HAPI_PROPERTIES);
                 if (homePropFile.exists()) {
-                    try (InputStream in = new FileInputStream(etcPropFile)) {
+                    try (InputStream in = new FileInputStream(homePropFile)) {
                         HapiProperties.properties = new Properties();
                         HapiProperties.properties.load(in);
                     } catch (Exception e) {
