@@ -25,15 +25,14 @@ public class DHIS2AuthInterceptor extends AuthorizationInterceptor {
     @Override
     public List<IAuthRule> buildRuleList(RequestDetails theRequestDetails) {
         boolean authorized;
-        String bearerAuthorization = theRequestDetails.getHeader("Authorization");
-        if (bearerAuthorization != null) {
-            String accessToken = bearerAuthorization.split(" ")[1];
-            Boolean isAuthorizedToken = authorizationStore.getIfPresent(accessToken);
+        String authorization = theRequestDetails.getHeader("Authorization");
+        if (!GeneralUtility.isEmpty(authorization)) {
+            Boolean isAuthorizedToken = authorizationStore.getIfPresent(authorization);
             if (isAuthorizedToken != null) {
                 authorized = isAuthorizedToken;
-            } else {               
-                authorized = checkToken(accessToken);
-                authorizationStore.put(accessToken, authorized);
+            } else {
+                authorized = checkAuthorization(authorization);
+                authorizationStore.put(authorization, authorized);
             }
         } else {
             String token = getAccessTokenFromSecurityContext();
@@ -52,11 +51,10 @@ public class DHIS2AuthInterceptor extends AuthorizationInterceptor {
 
     }
 
-    private boolean checkToken(String token) {
-        String bearerAuthorization = GeneralUtility.getBearerAuthorization(token);
+    private boolean checkAuthorization(String authorization) {
         String url = HapiProperties.getCustomDhis2BaseUrl() + "/api/me";
         try {
-            DHIS2HttpUtility.httpGet(url, bearerAuthorization);
+            DHIS2HttpUtility.httpGet(url, authorization);
             return true;
         } catch (UnauthorizedApiException ex) {
             return false;
