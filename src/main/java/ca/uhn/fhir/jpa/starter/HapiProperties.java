@@ -1,3 +1,11 @@
+/* The following is the attached license for modifications done by ITINORDIC*/
+
+/*
+  * Modifications from ITINORDIC are as follows
+  *1. Added Dynamic resolution of properties
+  *2. Added DHIS2 (custom) properties for authentication and authorization
+*/
+
 /*
  *BSD 2-Clause License
  *
@@ -21,6 +29,7 @@
  *IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
  *THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **/
+
 package ca.uhn.fhir.jpa.starter;
 
 import ca.uhn.fhir.context.ConfigurationException;
