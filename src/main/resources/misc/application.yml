@@ -1,0 +1,428 @@
+#
+# Copyright (c) 2004-2019, University of Oslo
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+# Redistributions of source code must retain the above copyright notice, this
+# list of conditions and the following disclaimer.
+#
+# Redistributions in binary form must reproduce the above copyright notice,
+# this list of conditions and the following disclaimer in the documentation
+# and/or other materials provided with the distribution.
+# Neither the name of the HISP project nor the names of its contributors may
+# be used to endorse or promote products derived from this software without
+# specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO PROGRAM_STAGE_EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+# ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+
+server:
+  # The default port on which HTTP connections will be available when starting
+  # the Adapter as a standalone application.
+  port: 8081
+
+spring:
+  # Settings for the database connection.
+  datasource:
+    # The JDBC URL of the database in which the Adapter tables are located.
+    url: jdbc:postgresql://localhost/dhis2-fhir
+    # The username that is required to connect to the database.
+    username: dhis-fhir
+    # The password that is required to connect to the database.
+    password: dhis-fhir
+    # Settings of the database connection pool.
+    hikari:
+      # The minimum number of idle connections in the database connection
+      # pool.
+      minimum-idle: 2
+      # The maximum size of the connection pool with database connections.
+      # The size should be at least double the size of the defined maximum
+      # of message queue listener concurrency that is defined below. The
+      # database must be able to handle this amount of connections.
+      maximum-pool-size: 50
+  # Settings for the Redis cache (at least version 4 or later). If no cache
+  # that is specified below uses Redis, then these settings will not be used.
+  redis:
+    # Connection URL. Overrides host, port, and password. User is ignored.
+    # Example: redis://user:password@example.com:6379
+    url: redis://localhost:6379
+  # Settings of the Artemis message queueing system. For a non-clustered
+  # installation the embedded client can be used where the data is stored
+  # on the local file system.
+  artemis:
+    # Settings for the embedded client, that can be used for a non-clustered
+    # installation.
+    embedded:
+      # Specifies of the embedded client should be enabled. If the adapter
+      # runs in a clustered environment the embedded client must not be enabled
+      # and host, port, username and password for the Artemis broker must be
+      # specified.
+      enabled: true
+      # The ID of the embedded client (should not be changed).
+      server-id: 1
+      # Specifies if the queue data should be persisted or just hold in memory.
+      # In production and production-like environments data must be persisted
+      # in order to avoid a data loss.
+      persistent: true
+      # Specifies the directory in which the embedded message queue stores all
+      # of its data. The directory should be included in the backup of the
+      # machine on which the adapter has been installed.
+      data-directory: ${dhis2.home}/services/fhir-adapter/artemis
+    # Artemis broker host.
+    host: localhost
+    # Artemis broker port.
+    port: 61616
+    # Login user of the broker.
+    user:
+    # Login password of the broker.
+    password:
+  jpa:
+    # Specifies if SQL statement should be output. This should normally
+    # be disabled and should not be changed.
+    show-sql: false
+
+management:
+  health:
+    jms:
+      # JMS health check can be enabled when Artemis queue is available.
+      enabled: false
+  metrics:
+    enable:
+      http:
+        client:
+          requests: false
+
+# Specifies the default settings of the circuit breaker. The circuit
+# breaker settings do not need to be adjusted normally.
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          strategy: SEMAPHORE
+          semaphore:
+            maxConcurrentRequests: 100000
+        timeout:
+          enabled: false
+      circuitBreaker:
+        enabled: true
+      fallback:
+        enabled: true
+
+# Configuration of the DHIS2 FHIR adapter.
+dhis2.fhir-adapter:
+  # Specifies if the automatic import of FHIR resources to DHIS2 is enabled.
+  import-enabled: false
+  # Specifies if the automatic export of DHIS2 resources to FHIR resources is enabled.
+  # Important note: This is an experimental feature currently.
+  export-enabled: true
+  # Specifies if the FHIR interfaces should be enabled.
+  fhir-rest-interfaces:
+    # Specifies if DSTU3 FHIR interfaces should be enabled.
+    dstu3-enabled: false
+    # Specifies if R4 FHIR interfaces should be enabled.
+    r4-enabled: false
+    # The default search count that is used when none is specified.
+    default-search-count: 10
+    # The maximum number of resources to be returned on a search.
+    max-search-count: 10000
+  # Configuration of DHIS2 endpoint that is accessed by the adapter.
+  endpoint:
+    # The base URL of the DHIS2 installation.
+    url: https://dev.itin.africa/frism
+    # The API version that should be accessed on the DHIS2 installation.
+    api-version: 31
+    # Authentication data to access metadata on DHIS2 installation.
+    # The complete metadata (organization units, tracked entity types,
+    # tracked entity attributes, tracker programs, tracker program stages)
+    # must be accessible.
+    # If synchronization from DHIS2 resources to FHIR servers has been
+    # enabled, the account must also be able to create, read and update
+    # tracked entity instances, enrollments and events.
+    system-authentication:
+      # The username that is used to connect to DHIS2 to access the metadata.
+      username: android_admin
+      # The password that is used to connect to DHIS2 to access the metadata.
+      password: Dhis123#
+    # The connect timeout when accessing DHIS2 in milli-seconds 5000 default.
+    connect-timeout: 5000
+    # The read timeout when accessing DHIS2 in milli-seconds 30000 default.
+    read-timeout: 60000
+    # Maximum number of pooled connections that are used to exchange data.
+    max-pooled-connections: 5
+    # The WWW-Authenticate headers that are returned to the FHIR REST client
+    # in case of an authentication error.
+    wwwAuthenticates:
+      - type: Basic
+        realm: DHIS2
+      - type: Bearer
+        realm: dhis2/oauth2
+  # Contains the security settings of the adapter.
+  security:
+    # The adapter uses security authorities that are mapped to authorities of DHIS2.
+    authorities:
+      # The mapping of the adapter ADMINISTRATION authority to DHIS2 authorities.
+      # At least one of the specified DHIS2 authorities must be assigned to the user
+      # in order to get the specified adapter authority.
+      administration:
+      - ALL
+      - F_SYSTEM_SETTING
+      # The mapping of the adapter CODE-MAPPING authority to DHIS2 authorities.
+      # At least one of the specified DHIS2 authorities must be assigned to the user
+      # in order to get the specified adapter authority.
+      code-mapping:
+      - ALL
+      - F_SYSTEM_SETTING
+      # The mapping of the adapter DATA-MAPPING authority to DHIS2 authorities.
+      # At least one of the specified DHIS2 authorities must be assigned to the user
+      # in order to get the specified adapter authority.
+      data-mapping:
+      - ALL
+      - F_SYSTEM_SETTING
+  # Defines the settings for the different cached that are used by the application.
+  # Three cache types are supported:
+  # - none (no caching at all, useful for mapping development)
+  # - caffeine (in memory cache, useful if there is only a single instance)
+  # - redis (Redis 4 or later)
+  cache:
+    # Settings of the Adapter metadata cache (code mappings, data mappings, rules).
+    metadata:
+      type: caffeine
+      caffeine:
+        spec: expireAfterAccess=60s,maximumSize=10000
+      redis:
+        time-to-live: 60s
+        key-prefix: fhir-adapter:metadata
+    # Settings of the DHIS2 metadata cache.
+    dhis:
+      type: caffeine
+      caffeine:
+        spec: expireAfterAccess=120s,maximumSize=10000
+      redis:
+        time-to-live: 120s
+        key-prefix: fhir-adapter:dhis
+    # Settings of FHIR resource cache.
+    fhir:
+      type: caffeine
+      caffeine:
+        spec: expireAfterAccess=500s,maximumSize=10000
+      redis:
+        time-to-live: 500s
+        key-prefix: fhir-adapter:fhir
+  # Settings for FHIR subscriptions on FHIR servers as a FHIR client and the related
+  # data processing.
+  fhir-client:
+    # Settings of the processor that retrieves the FHIR resources by last update
+    # timestamp from the FHIR client.
+    processor:
+      # The maximum number of FHIR resources that should be returned by the FHIR
+      # client at once. The last updated timestamp that is used by the FHIR client
+      # must change at least within the specified amount of items.
+      max-search-count: 10000
+      # The maximum number of minutes processed FHIR resource IDs will remain stored
+      # in order to avoid duplicate FHIR resource processing (increases load and the
+      # probability of data inconsistencies).
+      max-processed-age-minutes: 2880
+      # The maximum number of parallel executions that are used to process found new
+      # or updated FHIR resources. The value must be at least as big as the maximum
+      # number of listeners that are specified for the request queue. Increasing this
+      # value may also require more database connections (double amount of the parallel
+      # count).
+      parallel-count: 5
+      # Specifies if FHIR resources that have been received by a rest hook request
+      # should be stored temporarily in the database. This might result in a data
+      # protection issue since encryption of stored FHIR resources is not yet supported.
+      # If this feature is disabled, the received FHIR resources will not be stored in
+      # database and will be re-read when processing them for import. This might even be
+      # faster (depending on the remote FHIR client and if such an operation is possible)
+      # than storing the FHIR resources in the adapter database.
+      store-fhir-resource: true
+    # The queue that is used to store incoming REST hook requests. For each FHIR
+    # resource type (per FHIR client) there should be maximum one item in the queue.
+    # Also processing will be grouped. It must absolutely avoided that the data
+    # retrieval of the same FHIR resource type of one FHIR client is done more than
+    # one time.
+    rest-hook-request-queue:
+      # The name of the queue.
+      queue-name: jms.queue.remoteWebHookRequestQueue
+      # Settings of the listener that processes the messages in the queue.
+      listener:
+        # Minimum and maximum number of listener instances (concurrent processing
+        # of queued messages) on each running adapter instance.
+        concurrency: 1-5
+      # Settings of the embedded queue. If the adapter is connected to an external
+      # Artemis broker, the settings for the queue and the queue creation must be done
+      # on the external Artemis broker.
+      embedded-address-settings:
+        # Maximum number of attempts to process the message.
+        max-delivery-attempts: 100
+        # The initial retry delay (in milli seconds) in case of an error.
+        redelivery-delay: 30000
+        # The factor that is used to increase the deliver delay on each retry.
+        redelivery-multiplier: 3.0
+        # The maximum delay (in milli seconds) between each retry in case of an error.
+        max-redelivery-delay: 1800000
+  repository:
+    # Queue that contains FHIR resource references that could not be processed
+    # after multiple retries because of any error.
+    fhir-resource-dl-queue:
+      # The name of the queue.
+      queue-name: jms.queue.remoteFhirResourceDlQueue
+      # Settings of the embedded queue. If the adapter is connected to an external
+      # Artemis broker, the settings for the queue and the queue creation must be done
+      # on the external Artemis broker.
+      embedded-address-settings:
+        # The maximum time (in milli seconds) a message remains in the queue before it
+        # is regarded as expired.
+        expiry-delay: 2419200000
+    # Queue that contains references of FHIR resources that should be processed and
+    # should be synchronized with DHIS2.
+    fhir-resource-queue:
+      # The name of the queue.
+      queue-name: jms.queue.remoteFhirResourceQueue
+      # Settings of the listener that processes the messages in the queue.
+      listener:
+        # Minimum and maximum number of listener instances (concurrent processing
+        # of queued messages) on each running adapter instance.
+        concurrency: 1-5
+      # Settings of the embedded queue. If the adapter is connected to an external
+      # Artemis broker, the settings for the queue and the queue creation must be done
+      # on the external Artemis broker.
+      embedded-address-settings:
+        # The name of the queue into which the message is placed when the maximum
+        # delivery attempts have exceeded.
+        dead-letter-address: jms.queue.remoteFhirResourceDlQueue
+        # Maximum number of attempts to process the message before it is placed in the
+        # dead letter queue.
+        max-delivery-attempts: 100
+        # The initial retry delay (in milli seconds) in case of an error.
+        redelivery-delay: 30000
+        # The factor that is used to increase the deliver delay on each retry.
+        redelivery-multiplier: 3.0
+        # The maximum delay (in milli seconds) between each retry in case of an error.
+        max-redelivery-delay: 1800000
+  # Settings for the retrieval of the synchronization data from DHIS2. The retrieved data
+  # can be stored on connected client FHIR services.
+  sync:
+    # Retrieves new and updated DHIS2 resources periodically.
+    processor:
+      # Specifies how often the DHIS2 resources should be synchronized. Event if the
+      # processor has been disabled, this value is used to periodically clean-up
+      # information about DHIS2 resources that have been stored by the adapter. Since
+      # the data is polled from DHIS2 currently the polling should not be done too
+      # often to save resources on DHIS2.
+      request-rate-millis: 60000
+      # Specifies the number of milli seconds that are subtracted from the stored last
+      # updated timestamp when synchronizing the DHIS2 resources the next time. This is
+      # used to avoid missing data due to inaccuracies of clocks and time windows when
+      # stored data is not visible (not yet committed).
+      tolerance-millis: 2000
+      # The maximum number of DHIS2 resources that should be returned by the DHIS2
+      # client at once. The last updated timestamp that is used by the DHIS2 client
+      # must change at least within the specified amount of items.
+      max-search-count: 50000
+      # The maximum number of minutes processed DHIS2 resource IDs will remain stored
+      # in order to avoid duplicate DHIS2 resource processing (increases load and the
+      # probability of data inconsistencies).
+      max-processed-age-minutes: 2880
+      # The maximum number of parallel executions that are used to process found new
+      # or updated DHIS2 resources. Increasing this value may also require more database
+      # connections (double amount of the parallel count).
+      parallel-count: 5
+      # DHIS 2 resource types that will be synchronized.
+      resource-types:
+      - ORGANIZATION_UNIT
+      #- TRACKED_ENTITY
+      #- PROGRAM_STAGE_EVENT
+    # The queue that is used to store distributed requests to synchronize the data from
+    # DHIS2 with connected FHIR servers. There should be maximum one item in the queue.
+    sync-request-queue:
+      # The name of the queue.
+      queue-name: jms.queue.dhisSyncRequestQueue
+      # Settings of the listener that processes the messages in the queue. Even if the
+      # synchronization has been disabled, this queue is used for purging the information
+      # of old stored DHIS2 resources.
+      listener:
+        # Minimum and maximum number of listener instances (concurrent processing
+        # of queued messages) on each running adapter instance. Only one message
+        # can be processed on all instances currently (ensured by settings of the queue).
+        concurrency: 1-1
+      # Settings of the embedded queue. If the adapter is connected to an external
+      # Artemis broker, the settings for the queue and the queue creation must be done
+      # on the external Artemis broker.
+      embedded-address-settings:
+        # Maximum number of attempts to process the message.
+        max-delivery-attempts: 100
+        # The initial retry delay (in milli seconds) in case of an error.
+        redelivery-delay: 30000
+        # The factor that is used to increase the deliver delay on each retry.
+        redelivery-multiplier: 3.0
+        # The maximum delay (in milli seconds) between each retry in case of an error.
+        max-redelivery-delay: 1800000
+    # Queue that contains DHIS2 resource references that could not be processed
+    # after multiple retries because of any error.
+    dhis-resource-dl-queue:
+      # The name of the queue.
+      queue-name: jms.queue.dhisResourceDlQueue
+      # Settings of the embedded queue. If the adapter is connected to an external
+      # Artemis broker, the settings for the queue and the queue creation must be done
+      # on the external Artemis broker.
+      embedded-address-settings:
+        # The maximum time (in milli seconds) a message remains in the queue before it
+        # is regarded as expired.
+        expiry-delay: 2419200000
+    # Queue that contains references of DHIS2 resources that should be processed and
+    # should be synchronized with client FHIR servers.
+    dhis-resource-queue:
+      # The name of the queue.
+      queue-name: jms.queue.dhisResourceQueue
+      # Settings of the listener that processes the messages in the queue.
+      listener:
+        # Minimum and maximum number of listener instances (concurrent processing
+        # of queued messages) on each running adapter instance.
+        concurrency: 1-5
+      # Settings of the embedded queue. If the adapter is connected to an external
+      # Artemis broker, the settings for the queue and the queue creation must be done
+      # on the external Artemis broker.
+      embedded-address-settings:
+        # The name of the queue into which the message is placed when the maximum
+        # delivery attempts have exceeded.
+        dead-letter-address: jms.queue.remoteFhirResourceDlQueue
+        # Maximum number of attempts to process the message before it is placed in the
+        # dead letter queue.
+        max-delivery-attempts: 100
+        # The initial retry delay (in milli seconds) in case of an error.
+        redelivery-delay: 30000
+        # The factor that is used to increase the deliver delay on each retry.
+        redelivery-multiplier: 3.0
+        # The maximum delay (in milli seconds) between each retry in case of an error.
+        max-redelivery-delay: 1800000
+  # Settings of the transformation.
+  transformation:
+    # The JavaScript engine that is used to process rules, mappings and transformations.
+    # This value should not be changed normally. After changing this value, rules,
+    # mappings and transformations must be retested.
+    script-engine-name: nashorn
+    # The arguments that are passed to the script engine. By default java support
+    # (direct access to Java classes) and non-standard script extensions are disabled.
+    # This increases the security of the scripts and should guarantee that scripts can
+    # still be run with a different script engine.
+    script-engine-args:
+      - -doe
+      - --no-java
+      - --no-syntax-extensions
+    # The maximum number of seconds a compiled script will remain in the cache after its
+    # last access before it is discarded from the cache and needs to be re-compiled.
+    max-cached-script-lifetime-secs: 86400
+    # The maximum number of compiled scripts that will be cached.
+    max-cached-scripts: 10000
