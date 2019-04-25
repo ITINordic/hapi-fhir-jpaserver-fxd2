@@ -1,0 +1,79 @@
+curl -XPUT -u user:password -H 'Content-Type: application/json' http://localhost:8081/api/systems/c4e9ac6a-cc8f-4c73-aab6-0fa6775c0ca3 -d '{
+  "name": "Zimbabwe Organization ID",
+  "code": "ZW_ORGANIZATION_ID",
+  "systemUri": "http://example.zw/organizations",
+  "fhirDisplayName": "Zimbabwe Organization ID"
+}'
+
+curl -XPUT -u user:password -H 'Content-Type: application/json' http://localhost:8081/api/systems/2dd51309-3319-40d2-9a1f-be2a102df4a7 -d '{
+  "name": "Zimbabwe Location ID",
+  "code": "ZW_LOCATION_ID",
+  "systemUri": "http://example.zw/locations",
+  "fhirDisplayName": "Zimbabwe Location ID"
+}'
+
+curl -XPUT -u user:password -H 'Content-Type: application/json' http://localhost:8081/api/fhirClients/73cd99c5-0ca8-42ad-a53b-1891fccce08f -d '{
+  "name": "FHIR Server",
+  "code": "FHIR_SERVER",
+  "description": "HAPI FHIR JPA Server.",
+  "fhirVersion": "R4",
+  "expEnabled": true,
+  "dhisEndpoint": {
+    "authenticationMethod": "BASIC",
+    "username": "user",
+    "password": "password"
+  },
+  "fhirEndpoint": {
+    "baseUrl": "http://localhost:8080/hapi-fhir-jpaserver/fhir",
+    "useRemote": true,
+    "headers" : [ {
+      "name" : "Authorization",
+      "value" : "Basic base64(user:password)",
+      "secure" : true
+    } ]
+  },
+  "adapterEndpoint": {
+    "baseUrl": "http://localhost:8081",
+    "authorizationHeader": "Bearer jhsj832jDShf8ehShdu7ejhDhsilwmdsgs",
+    "subscriptionType": "REST_HOOK"
+  }
+}'
+
+
+curl -XPUT -u user:password -H 'Content-Type: application/json' http://localhost:8081/api/fhirClientResources/5af512d5-df99-4f0c-b938-d5810931470b -d '{
+  "fhirResourceType": "ORGANIZATION",
+  "fhirClient": "http://localhost:8081/api/fhirClients/73cd99c5-0ca8-42ad-a53b-1891fccce08f",
+  "exportOnly": true
+}'
+
+curl -XPUT -u user:password -H 'Content-Type: application/json' http://localhost:8081/api/fhirClientResources/475ac668-0e26-4fc8-b13f-04b0e852148f -d '{
+  "fhirResourceType": "LOCATION",
+  "fhirClient": "http://localhost:8081/api/fhirClients/73cd99c5-0ca8-42ad-a53b-1891fccce08f",
+  "exportOnly": true
+}'
+
+curl -XPOST -u user:password -H 'Content-Type: application/json' http://localhost:8081/api/fhirClientSystems -d '{
+  "fhirResourceType": "ORGANIZATION",
+  "fhirClient": "http://localhost:8081/api/fhirClients/73cd99c5-0ca8-42ad-a53b-1891fccce08f",
+  "system": "http://localhost:8081/api/systems/c4e9ac6a-cc8f-4c73-aab6-0fa6775c0ca3"
+}'
+
+curl -XPOST -u user:password -H 'Content-Type: application/json' http://localhost:8081/api/fhirClientSystems -d '{
+  "fhirResourceType": "LOCATION",
+  "fhirClient": "http://localhost:8081/api/fhirClients/73cd99c5-0ca8-42ad-a53b-1891fccce08f",
+  "system": "http://localhost:8081/api/systems/2dd51309-3319-40d2-9a1f-be2a102df4a7"
+}'
+
+curl -XPATCH -i -u user:password -H 'Content-Type: application/merge-patch+json' http://localhost:8081/api/rules/d0e1472a-05e6-47c9-b36b-ff1f06fec352 -d '{
+  "fhirUpdateEnabled": true,
+  "fhirDeleteEnabled": true
+}'
+
+curl -XPATCH -i -u user:password -H 'Content-Type: application/merge-patch+json' http://localhost:8081/api/rules/b9546b02-4adc-4868-a4cd-d5d7789f0df0 -d '{
+  "fhirUpdateEnabled": true,
+  "fhirDeleteEnabled": true
+}'
+
+sudo -u postgres psql dhis2-fhir
+UPDATE fhir_dhis_sync_group_update SET last_updated='2000-01-01 00:00:00' WHERE id='22204dd4-05d9-4cdd-96a8-ed742087d469';
+
