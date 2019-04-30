@@ -1,0 +1,190 @@
+############Tracked Entity Modification #################################################3
+
+curl http://localhost:8081/api/trackedEntities/4203754d-2177-4a44-86aa-2de31ee4c8ee -u 'admin:district' -XPATCH \
+-H 'Content-Type: application/merge-patch+json' \
+-d '{ "trackedEntityReference" : {
+    "value" : "FHIR.Patient",
+    "type" : "NAME"
+  },
+  "trackedEntityIdentifierReference" : {
+    "value" : "Ewi7FUfcHAD",
+    "type" : "ID"
+  }}' 
+#################\\End Tracked Entity Modification #################### 
+
+#########Add New Script Arguments ################################################
+curl 'http://localhost:8081/api/scriptArgs/5f9c92b6-6b19-11e9-8da5-630bd203fe4a' -i -u 'admin:district' -XPUT \
+    -H 'Content-Type: application/json' \
+    -d '{
+  "script" : "http://localhost:8081/api/scripts/ea887943-5e94-4e31-9441-c7661fe1063e",
+  "name" : "fpNameGivenUseUsualAttribute",
+  "description" : "The reference of the tracked entity attribute that contains the FHIR.Patient.name.given.use.usual of the FHIR.Patient",
+  "dataType" : "TRACKED_ENTITY_ATTRIBUTE_REF",
+  "mandatory" : true,
+  "array" : false,
+  "defaultValue" : "ID:YLWBNwmqHxc"
+}'
+
+curl 'http://localhost:8081/api/scriptArgs/5fb4a22e-6b1a-11e9-9e03-ff7b6145ab00' -i -u 'admin:district' -XPUT \
+    -H 'Content-Type: application/json' \
+    -d '{
+  "script" : "http://localhost:8081/api/scripts/ea887943-5e94-4e31-9441-c7661fe1063e",
+  "name" : "fpNameFamilyUseUsualAttribute",
+  "description" : "The reference of the tracked entity attribute that contains the FHIR.Patient.name.family.use.usual of the FHIR.Patient",
+  "dataType" : "TRACKED_ENTITY_ATTRIBUTE_REF",
+  "mandatory" : true,
+  "array" : false,
+  "defaultValue" : "ID:x1cepD1yUet"
+}'
+
+curl 'http://localhost:8081/api/scriptArgs/e2d284be-6b1a-11e9-be42-43dceb761220' -i -u 'admin:district' -XPUT \
+    -H 'Content-Type: application/json' \
+    -d '{
+  "script" : "http://localhost:8081/api/scripts/ea887943-5e94-4e31-9441-c7661fe1063e",
+  "name" : "fpExtensionBirthPlaceAttribute",
+  "description" : "The reference of the tracked entity attribute that contains the FHIR.Patient.extension.birthPlace of the FHIR.Patient",
+  "dataType" : "TRACKED_ENTITY_ATTRIBUTE_REF",
+  "mandatory" : true,
+  "array" : false,
+  "defaultValue" : "ID:jxlrqIyum84"
+}'
+
+curl 'http://localhost:8081/api/scriptArgs/00765f0e-6b1b-11e9-8f4e-efb7d0af15ea' -i -u 'admin:district' -XPUT \
+    -H 'Content-Type: application/json' \
+    -d '{
+  "script" : "http://localhost:8081/api/scripts/ea887943-5e94-4e31-9441-c7661fe1063e",
+  "name" : "fpElementBirthDateAttribute",
+  "description" : "The reference of the tracked entity attribute that contains the FHIR.Patient.element.birthDate of the FHIR.Patient",
+  "dataType" : "TRACKED_ENTITY_ATTRIBUTE_REF",
+  "mandatory" : true,
+  "array" : false,
+  "defaultValue" : "ID:uRuClNAH5Py"
+}'
+
+curl 'http://localhost:8081/api/scriptArgs/6ba7b1b0-6b1b-11e9-9101-eb610fca14ca' -i -u 'admin:district' -XPUT \
+    -H 'Content-Type: application/json' \
+    -d '{
+  "script" : "http://localhost:8081/api/scripts/ea887943-5e94-4e31-9441-c7661fe1063e",
+  "name" : "fpGenderAttribute",
+  "description" : "The reference of the tracked entity attribute that contains the FHIR.Patient.gender of the FHIR.Patient",
+  "dataType" : "TRACKED_ENTITY_ATTRIBUTE_REF",
+  "mandatory" : true,
+  "array" : false,
+  "defaultValue" : "ID:YApjk1lqpYb"
+}'
+
+curl 'http://localhost:8081/api/scriptArgs/45516294-6b1c-11e9-a4ce-5f173e476495' -i -u 'admin:district' -XPUT \
+    -H 'Content-Type: application/json' \
+    -d '{
+  "script" : "http://localhost:8081/api/scripts/ea887943-5e94-4e31-9441-c7661fe1063e",
+  "name" : "fpContactGivenNAttribute",
+  "description" : "The reference of the tracked entity attribute that contains the FHIR.Patient.contact.given.N of the FHIR.Patient",
+  "dataType" : "TRACKED_ENTITY_ATTRIBUTE_REF",
+  "mandatory" : true,
+  "array" : false,
+  "defaultValue" : "ID:Xk9DibYm88o"
+}'
+
+curl 'http://localhost:8081/api/scriptArgs/7daf7568-6b1c-11e9-8591-5fb8fdd13300' -i -u 'admin:district' -XPUT \
+    -H 'Content-Type: application/json' \
+    -d '{
+  "script" : "http://localhost:8081/api/scripts/ea887943-5e94-4e31-9441-c7661fe1063e",
+  "name" : "fpTelecomSystemPhoneAttribute",
+  "description" : "The reference of the tracked entity attribute that contains the FHIR.Patient.telecom.system.phone of the FHIR.Patient",
+  "dataType" : "TRACKED_ENTITY_ATTRIBUTE_REF",
+  "mandatory" : true,
+  "array" : false,
+  "defaultValue" : "ID:vvThfvPi2i4"
+}'
+
+curl 'http://localhost:8081/api/scriptArgs/c69d7e28-6b1c-11e9-ba03-f7c98aea9c73' -i -u 'admin:district' -XPUT \
+    -H 'Content-Type: application/json' \
+    -d '{
+  "script" : "http://localhost:8081/api/scripts/ea887943-5e94-4e31-9441-c7661fe1063e",
+  "name" : "fpIdentifierUseTempAttribute",
+  "description" : "The reference of the tracked entity attribute that contains the FHIR.Patient.identifier.use.temp of the FHIR.Patient",
+  "dataType" : "TRACKED_ENTITY_ATTRIBUTE_REF",
+  "mandatory" : true,
+  "array" : false,
+  "defaultValue" : "ID:rb3N4YVLYDl"
+}'
+
+curl 'http://localhost:8081/api/scriptArgs/5a6427ec-6b1d-11e9-a2eb-4b3c5909790e' -i -u 'admin:district' -XPUT \
+    -H 'Content-Type: application/json' \
+    -d '{
+  "script" : "http://localhost:8081/api/scripts/ea887943-5e94-4e31-9441-c7661fe1063e",
+  "name" : "fpExtensionGenderIdentityAttribute",
+  "description" : "The reference of the tracked entity attribute that contains the FHIR.Patient.extension.genderIdentity of the FHIR.Patient",
+  "dataType" : "TRACKED_ENTITY_ATTRIBUTE_REF",
+  "mandatory" : true,
+  "array" : false,
+  "defaultValue" : "ID:onjEKgauYLD"
+}'
+#########\\End Addittion of New Script Arguments ################################################
+
+
+##################### Delete those (existing) default script arguments #########################################
+##### Delete default lastNameAttribute ############
+curl -XDELETE -i -u admin:district -H 'Content-Type: text/uri-list' 'http://localhost:8081/api/scriptArgs/0a7c26cb-7bd3-4394-9d47-a610ac231f8a'
+##### Delete default uniqueIdAttribute ############
+curl -XDELETE -i -u admin:district -H 'Content-Type: text/uri-list' 'http://localhost:8081/api/scriptArgs/276b26f2-ba01-41e6-89c6-b1100580b1f3'
+##### Delete default genderAttribute ############
+curl -XDELETE -i -u admin:district -H 'Content-Type: text/uri-list' 'http://localhost:8081/api/scriptArgs/8e3efdc7-6ce4-4899-bb20-faed7d5e3279'
+##### Delete default birthDateAttribute ############
+curl -XDELETE -i -u admin:district -H 'Content-Type: text/uri-list' 'http://localhost:8081/api/scriptArgs/90b3c110-38e4-4291-934c-e2569e8af1ba'
+##### Delete default addressTextAttribute ############
+curl -XDELETE -i -u admin:district -H 'Content-Type: text/uri-list' 'http://localhost:8081/api/scriptArgs/ae13ceca-86d7-4f60-8d54-25587d53a5bd'
+##### Delete default firstNameAttribute ############
+curl -XDELETE -i -u admin:district -H 'Content-Type: text/uri-list' 'http://localhost:8081/api/scriptArgs/b41dd571-a129-4fa6-a807-35ea5663e8e3'
+######################\\End deletion of default argument #########################################
+
+######################SCRIPT SOURCE TEXT UPDATE #####################################################
+curl -XPATCH -i -u admin:district -H 'Content-Type: application/merge-patch+json' 'http://localhost:8081/api/scriptSources/b2cfaf30-6ede-41f2-bd6c-448e76c429a1' -d '{
+   "sourceText" : "output.setOptionalValue(args['uniqueIdAttribute'], output.getIdentifier());\noutput.setValue(args['lastNameAttribute'], humanNameUtils.getPrimaryName(input.name).family, context.getFhirRequest().getLastUpdated());\noutput.setValue(args['firstNameAttribute'], humanNameUtils.getSingleGiven(humanNameUtils.getPrimaryName(input.name)), context.getFhirRequest().getLastUpdated());\nvar birthDate = dateTimeUtils.getPreciseDate(input.birthDateElement);\nif ((birthDate != null) || args['resetDhisValue'])\n{\n  output.setOptionalValue(args['birthDateAttribute'], birthDate, context.getFhirRequest().getLastUpdated());\n}\nif ((input.gender != null) || args['resetDhisValue'])\n{\n  output.setOptionalValue(args['genderAttribute'], input.gender, context.getFhirRequest().getLastUpdated());\n}\nvar addressText = addressUtils.getConstructedText(addressUtils.getPrimaryAddress(input.address));\nif ((addressText != null) || args['resetDhisValue'])\n{\n  output.setOptionalValue(args['addressTextAttribute'], addressText, context.getFhirRequest().getLastUpdated());\n}\ntrue"
+}'
+
+#######################\\End source text update #####################################################
+
+
+############################## FHIR CLIENT (ADMIN) ###################################################
+curl -XPUT -u admin:district -H 'Content-Type: application/json' http://localhost:8081/api/systems/ff842c76-a529-4563-972d-216b887a3573 -d '{
+  "name": "Zimbabwe Patient ID",
+  "code": "ZW_PATIENT_ID",
+  "systemUri": "http://example.zw/patients",
+  "fhirDisplayName": "Zimbabwe Patient ID"
+}'
+
+curl -XPUT -u admin:district -H 'Content-Type: application/json' http://localhost:8081/api/fhirClientResources/667bfa41-867c-4796-86b6-eb9f9ed4dc94 -d '{
+  "fhirResourceType": "PATIENT",
+  "fhirClient": "http://localhost:8081/api/fhirClients/73cd99c5-0ca8-42ad-a53b-1891fccce08f",
+  "exportOnly": false
+}'
+
+curl -XPOST -u admin:district -H 'Content-Type: application/json' http://localhost:8081/api/fhirClientSystems -d '{
+  "fhirResourceType": "PATIENT",
+  "fhirClient": "http://localhost:8081/api/fhirClients/73cd99c5-0ca8-42ad-a53b-1891fccce08f",
+  "system": "http://localhost:8081/api/systems/ff842c76-a529-4563-972d-216b887a3573"
+}'
+
+####################Subscribe for patient notifications #################################
+curl -XPOST 'http://localhost:8080/hapi-fhir-jpaserver/fhir/Subscription' -i -H 'Content-Type: application/json' -d \
+  '{
+      "resourceType": "Subscription",
+      "criteria": "Patient?",
+      "channel": {
+        "type": "rest-hook",
+        "endpoint": "http://localhost:8081/73cd99c5-0ca8-42ad-a53b-1891fccce08f/667bfa41-867c-4796-86b6-eb9f9ed4dc94",
+        "header": "Authorization: Bearer jhsj832jDShf8ehShdu7ejhDhsilwmdsgs"
+      }, 
+      "status": "requested"
+  }'
+
+
+
+
+
+
+
+
+
+
