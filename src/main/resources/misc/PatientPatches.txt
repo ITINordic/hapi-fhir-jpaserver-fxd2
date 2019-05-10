@@ -3,12 +3,12 @@
 curl http://localhost:8081/api/trackedEntities/4203754d-2177-4a44-86aa-2de31ee4c8ee -u 'admin:district' -XPATCH \
 -H 'Content-Type: application/merge-patch+json' \
 -d '{ "trackedEntityReference" : {
-    "value" : "FHIR.Patient",
+    "value" : "Person",
     "type" : "NAME"
   },
   "trackedEntityIdentifierReference" : {
-    "value" : "Ewi7FUfcHAD",
-    "type" : "ID"
+    "value" : "FHIR.Patient.identifier.use.usual",
+    "type" : "CODE"
   }}' 
 #################\\End Tracked Entity Modification #################### 
 
@@ -17,109 +17,26 @@ curl 'http://localhost:8081/api/scriptArgs/5f9c92b6-6b19-11e9-8da5-630bd203fe4a'
     -H 'Content-Type: application/json' \
     -d '{
   "script" : "http://localhost:8081/api/scripts/ea887943-5e94-4e31-9441-c7661fe1063e",
-  "name" : "fpNameGivenUseUsualAttribute",
-  "description" : "The reference of the tracked entity attribute that contains the FHIR.Patient.name.given.use.usual of the FHIR.Patient",
+  "name" : "uniqueIdCodeAttribute",
+  "description" : "The reference of the tracked entity attribute that contains the Unique ID Code  of the Person",
   "dataType" : "TRACKED_ENTITY_ATTRIBUTE_REF",
   "mandatory" : true,
   "array" : false,
-  "defaultValue" : "ID:YLWBNwmqHxc"
+  "defaultValue" : "CODE:FHIR.Patient.identifier.use.usual"
 }'
 
 curl 'http://localhost:8081/api/scriptArgs/5fb4a22e-6b1a-11e9-9e03-ff7b6145ab00' -i -u 'admin:district' -XPUT \
     -H 'Content-Type: application/json' \
     -d '{
   "script" : "http://localhost:8081/api/scripts/ea887943-5e94-4e31-9441-c7661fe1063e",
-  "name" : "fpNameFamilyUseUsualAttribute",
-  "description" : "The reference of the tracked entity attribute that contains the FHIR.Patient.name.family.use.usual of the FHIR.Patient",
+  "name" : "sistersNumberAttribute",
+  "description" : "The reference of the tracked entity attribute that contains the Sisters Number of the Person",
   "dataType" : "TRACKED_ENTITY_ATTRIBUTE_REF",
   "mandatory" : true,
   "array" : false,
-  "defaultValue" : "ID:x1cepD1yUet"
+  "defaultValue" : "CODE:FHIR.Patient.identifier.use.secondary"
 }'
 
-curl 'http://localhost:8081/api/scriptArgs/e2d284be-6b1a-11e9-be42-43dceb761220' -i -u 'admin:district' -XPUT \
-    -H 'Content-Type: application/json' \
-    -d '{
-  "script" : "http://localhost:8081/api/scripts/ea887943-5e94-4e31-9441-c7661fe1063e",
-  "name" : "fpExtensionBirthPlaceAttribute",
-  "description" : "The reference of the tracked entity attribute that contains the FHIR.Patient.extension.birthPlace of the FHIR.Patient",
-  "dataType" : "TRACKED_ENTITY_ATTRIBUTE_REF",
-  "mandatory" : true,
-  "array" : false,
-  "defaultValue" : "ID:jxlrqIyum84"
-}'
-
-curl 'http://localhost:8081/api/scriptArgs/00765f0e-6b1b-11e9-8f4e-efb7d0af15ea' -i -u 'admin:district' -XPUT \
-    -H 'Content-Type: application/json' \
-    -d '{
-  "script" : "http://localhost:8081/api/scripts/ea887943-5e94-4e31-9441-c7661fe1063e",
-  "name" : "fpElementBirthDateAttribute",
-  "description" : "The reference of the tracked entity attribute that contains the FHIR.Patient.element.birthDate of the FHIR.Patient",
-  "dataType" : "TRACKED_ENTITY_ATTRIBUTE_REF",
-  "mandatory" : true,
-  "array" : false,
-  "defaultValue" : "ID:uRuClNAH5Py"
-}'
-
-curl 'http://localhost:8081/api/scriptArgs/6ba7b1b0-6b1b-11e9-9101-eb610fca14ca' -i -u 'admin:district' -XPUT \
-    -H 'Content-Type: application/json' \
-    -d '{
-  "script" : "http://localhost:8081/api/scripts/ea887943-5e94-4e31-9441-c7661fe1063e",
-  "name" : "fpGenderAttribute",
-  "description" : "The reference of the tracked entity attribute that contains the FHIR.Patient.gender of the FHIR.Patient",
-  "dataType" : "TRACKED_ENTITY_ATTRIBUTE_REF",
-  "mandatory" : true,
-  "array" : false,
-  "defaultValue" : "ID:YApjk1lqpYb"
-}'
-
-curl 'http://localhost:8081/api/scriptArgs/45516294-6b1c-11e9-a4ce-5f173e476495' -i -u 'admin:district' -XPUT \
-    -H 'Content-Type: application/json' \
-    -d '{
-  "script" : "http://localhost:8081/api/scripts/ea887943-5e94-4e31-9441-c7661fe1063e",
-  "name" : "fpContactGivenNAttribute",
-  "description" : "The reference of the tracked entity attribute that contains the FHIR.Patient.contact.given.N of the FHIR.Patient",
-  "dataType" : "TRACKED_ENTITY_ATTRIBUTE_REF",
-  "mandatory" : true,
-  "array" : false,
-  "defaultValue" : "ID:Xk9DibYm88o"
-}'
-
-curl 'http://localhost:8081/api/scriptArgs/7daf7568-6b1c-11e9-8591-5fb8fdd13300' -i -u 'admin:district' -XPUT \
-    -H 'Content-Type: application/json' \
-    -d '{
-  "script" : "http://localhost:8081/api/scripts/ea887943-5e94-4e31-9441-c7661fe1063e",
-  "name" : "fpTelecomSystemPhoneAttribute",
-  "description" : "The reference of the tracked entity attribute that contains the FHIR.Patient.telecom.system.phone of the FHIR.Patient",
-  "dataType" : "TRACKED_ENTITY_ATTRIBUTE_REF",
-  "mandatory" : true,
-  "array" : false,
-  "defaultValue" : "ID:vvThfvPi2i4"
-}'
-
-curl 'http://localhost:8081/api/scriptArgs/c69d7e28-6b1c-11e9-ba03-f7c98aea9c73' -i -u 'admin:district' -XPUT \
-    -H 'Content-Type: application/json' \
-    -d '{
-  "script" : "http://localhost:8081/api/scripts/ea887943-5e94-4e31-9441-c7661fe1063e",
-  "name" : "fpIdentifierUseTempAttribute",
-  "description" : "The reference of the tracked entity attribute that contains the FHIR.Patient.identifier.use.temp of the FHIR.Patient",
-  "dataType" : "TRACKED_ENTITY_ATTRIBUTE_REF",
-  "mandatory" : true,
-  "array" : false,
-  "defaultValue" : "ID:rb3N4YVLYDl"
-}'
-
-curl 'http://localhost:8081/api/scriptArgs/5a6427ec-6b1d-11e9-a2eb-4b3c5909790e' -i -u 'admin:district' -XPUT \
-    -H 'Content-Type: application/json' \
-    -d '{
-  "script" : "http://localhost:8081/api/scripts/ea887943-5e94-4e31-9441-c7661fe1063e",
-  "name" : "fpExtensionGenderIdentityAttribute",
-  "description" : "The reference of the tracked entity attribute that contains the FHIR.Patient.extension.genderIdentity of the FHIR.Patient",
-  "dataType" : "TRACKED_ENTITY_ATTRIBUTE_REF",
-  "mandatory" : true,
-  "array" : false,
-  "defaultValue" : "ID:onjEKgauYLD"
-}'
 #########\\End Addittion of New Script Arguments ################################################
 
 
