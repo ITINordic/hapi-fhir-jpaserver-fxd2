@@ -57,7 +57,7 @@ curl -XDELETE -i -u admin:district -H 'Content-Type: text/uri-list' 'http://loca
 
 ######################SCRIPT SOURCE TEXT UPDATE #####################################################
 curl -XPATCH -i -u admin:district -H 'Content-Type: application/merge-patch+json' 'http://localhost:8081/api/scriptSources/b2cfaf30-6ede-41f2-bd6c-448e76c429a1' -d '{
-   "sourceText" : "output.setOptionalValue(args['uniqueIdAttribute'], output.getIdentifier());\noutput.setValue(args['lastNameAttribute'], humanNameUtils.getPrimaryName(input.name).family, context.getFhirRequest().getLastUpdated());\noutput.setValue(args['firstNameAttribute'], humanNameUtils.getSingleGiven(humanNameUtils.getPrimaryName(input.name)), context.getFhirRequest().getLastUpdated());\nvar birthDate = dateTimeUtils.getPreciseDate(input.birthDateElement);\nif ((birthDate != null) || args['resetDhisValue'])\n{\n  output.setOptionalValue(args['birthDateAttribute'], birthDate, context.getFhirRequest().getLastUpdated());\n}\nif ((input.gender != null) || args['resetDhisValue'])\n{\n  output.setOptionalValue(args['genderAttribute'], input.gender, context.getFhirRequest().getLastUpdated());\n}\nvar addressText = addressUtils.getConstructedText(addressUtils.getPrimaryAddress(input.address));\nif ((addressText != null) || args['resetDhisValue'])\n{\n  output.setOptionalValue(args['addressTextAttribute'], addressText, context.getFhirRequest().getLastUpdated());\n}\ntrue"
+   "sourceText" : "output.setOptionalValue(args['uniqueIdCodeAttribute'], output.getIdentifier());\noutput.setOptionalValue(args['sistersNumberAttribute'], identifierUtils.getResourceIdentifier(input,'PATIENT','urn:ceshhar:uid'));\ntrue"
 }'
 
 #######################\\End source text update #####################################################
@@ -67,7 +67,7 @@ curl -XPATCH -i -u admin:district -H 'Content-Type: application/merge-patch+json
 curl -XPUT -u admin:district -H 'Content-Type: application/json' http://localhost:8081/api/systems/ff842c76-a529-4563-972d-216b887a3573 -d '{
   "name": "Zimbabwe Patient ID",
   "code": "ZW_PATIENT_ID",
-  "systemUri": "http://example.zw/patients",
+  "systemUri": "urn:dreams:uid",
   "fhirDisplayName": "Zimbabwe Patient ID"
 }'
 
