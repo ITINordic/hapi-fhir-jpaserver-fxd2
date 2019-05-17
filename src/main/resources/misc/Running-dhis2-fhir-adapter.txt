@@ -1,0 +1,13 @@
+######################### running dhis2-fhir-adapter ##################################
+sudo cp /home/ubuntu/hapi-fhir-master/hapi-fhir-jpaserver-rirmis/src/main/resources/misc/application.yml /etc/dhis-fhir/dhis/services/fhir-adapter
+####### Run DHIS2 FHIR Adapter ###################################
+export DHIS2_HOME="/etc/dhis-fhir/dhis";
+nohup java -jar /etc/dhis-fhir/dhis/services/fhir-adapter/dhis2-fhir-adapter.war  > ~/dhis2-fhir-launch.log &
+####### Verify DHIS2 FHIR Adapter is running ##################
+curl http://localhost:8081/docs/api-guide.html
+########Stop DHIS2 FHIR Adapter #################################
+netstat -peanut | grep 8081
+kill -9  15071 (processId last)
+
+############## View Logs ##################################
+cat /etc/dhis-fhir/dhis/services/fhir-adapter/logs/dhis2-fhir-adapter.log
