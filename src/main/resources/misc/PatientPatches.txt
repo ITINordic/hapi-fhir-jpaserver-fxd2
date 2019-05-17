@@ -102,7 +102,7 @@ curl http://localhost:8081/api/scriptArgs/2db146ac-1895-48e0-9d24-e81c7f8a7033 -
 -H 'Content-Type: application/merge-patch+json' \
 -d '{ "mandatory" : true,  "defaultValue" : "ZW0901" }' 
 #################\\Modify  default DHIS2 organization unit code script argument #################### 
-curl -u 'android_admin:Dhis123#' http://localhost:8081/api/scriptArgs/2db146ac-1895-48e0-9d24-e81c7f8a7033
+curl -u 'admin:district' http://localhost:8081/api/scriptArgs/2db146ac-1895-48e0-9d24-e81c7f8a7033
 ######################################################
 
 
