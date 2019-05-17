@@ -122,7 +122,7 @@ hystrix:
 # Configuration of the DHIS2 FHIR adapter.
 dhis2.fhir-adapter:
   # Specifies if the automatic import of FHIR resources to DHIS2 is enabled.
-  import-enabled: false
+  import-enabled: true
   # Specifies if the automatic export of DHIS2 resources to FHIR resources is enabled.
   # Important note: This is an experimental feature currently.
   export-enabled: true
