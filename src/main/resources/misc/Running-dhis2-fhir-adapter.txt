@@ -11,3 +11,5 @@ kill -9  15071 (processId last)
 
 ############## View Logs ##################################
 cat /etc/dhis-fhir/dhis/services/fhir-adapter/logs/dhis2-fhir-adapter.log
+##############Edit Adapter Settings ########################################
+vi /etc/dhis-fhir/dhis/services/fhir-adapter/application.yml
