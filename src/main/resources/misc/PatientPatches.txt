@@ -90,7 +90,7 @@ curl -XPOST 'http://localhost:8080/hapi-fhir-jpaserver/fhir/Subscription' -i -H 
       "criteria": "Patient?",
       "channel": {
         "type": "rest-hook",
-        "endpoint": "http://localhost:8081/73cd99c5-0ca8-42ad-a53b-1891fccce08f/667bfa41-867c-4796-86b6-eb9f9ed4dc94",
+        "endpoint": "http://localhost:8081/remote-fhir-rest-hook/73cd99c5-0ca8-42ad-a53b-1891fccce08f/667bfa41-867c-4796-86b6-eb9f9ed4dc94",
         "header": "Authorization: Bearer jhsj832jDShf8ehShdu7ejhDhsilwmdsgs"
       }, 
       "status": "requested"
@@ -104,6 +104,7 @@ curl http://localhost:8081/api/scriptArgs/2db146ac-1895-48e0-9d24-e81c7f8a7033 -
 #################\\Modify  default DHIS2 organization unit code script argument #################### 
 curl -u 'admin:district' http://localhost:8081/api/scriptArgs/2db146ac-1895-48e0-9d24-e81c7f8a7033
 ######################################################
+curl -XPOST -i -H 'Authorization: Bearer jhsj832jDShf8ehShdu7ejhDhsilwmdsgs' http://localhost:8081/remote-fhir-rest-hook/73cd99c5-0ca8-42ad-a53b-1891fccce08f/667bfa41-867c-4796-86b6-eb9f9ed4dc94
 
 
 
