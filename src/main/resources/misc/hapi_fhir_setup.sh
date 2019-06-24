@@ -2,25 +2,38 @@
 
 # Install java
 sudo apt update
-sudo apt install openjdk-8-jdk
+sudo add-apt-repository universe
+sudo apt update
+
+sudo apt install -y openjdk-8-jdk
 
 # Add environmental varaiables and add path to JAVA_HOME
-echo "JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64" | sudo tee /etc/environment && source /etc/environment
+sudo tee /etc/environment <<EOF
+JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64
+EOF
 
-echo $JAVA_HOME (to check)
+source /etc/environment
 
-sudo apt install maven
+echo $JAVA_HOME #(to check)
 
-sudo apt install postgresql-10
+sudo apt install -y maven
 
-sed -i "s/#listen_addresses = 'localhost'\t/listen_addresses = '192.168.56.1'/g" /etc/postgresql/10/main/postgresql.conf
+sudo apt install -y postgresql-10
+
+
+sudo sed -i "s/# listen_addresses = 'localhost'/listen_addresses = 'localhost'/g" /etc/postgresql/10/main/postgresql.conf
 
 sudo systemctl restart postgresql
 
-echo set postgres password enter psql terminal \"\\password postgres\" after entering password quit by \\q
-sudo -u postgres psql postgres
+sleep 5
 
-sudo -u postgres psql -c "create database fhirdb; create user hapiuser with encrypted password 'hapipasswd'; grant all privileges on database fhirdb to hapiuser;"
+sudo adduser --system --no-create-home --disabled-login --group hapiuser
+
+sleep 3
+
+sudo -u postgres psql -c "create database fhirdb;"
+sudo -u postgres psql -c "create user ${PGUSERNAME} with encrypted password '${PGPASSWD}';"
+sudo -u postgres psql -c "grant all privileges on database fhirdb to ${PGUSERNAME};"
 
 sudo groupadd tomcat
 
@@ -30,26 +43,14 @@ sudo useradd -s /bin/false -g tomcat -d /opt/tomcat tomcat
 cd /tmp
 
 #Use curl to download the link that you copied from the Tomcat website:
-curl -O https://www-eu.apache.org/dist/tomcat/tomcat-9/v9.0.17/bin/apache-tomcat-9.0.17.tar.gz
+curl -O https://www.apache.org/dist/tomcat/tomcat-9/v9.0.21/bin/apache-tomcat-9.0.21.tar.gz
 
 #We will install Tomcat to the /opt/tomcat directory. Create the directory, then extract the archive to it with these commands:
 
 sudo mkdir /opt/tomcat
-sudo tar xzvf apache-tomcat-9*tar.gz -C /opt/tomcat –strip-components=1
+sudo tar xzvf apache-tomcat-9.0.21.tar.gz -C /opt/tomcat --strip-components=1
 
-#Next, we can set up the proper user permissions for our installation.
 
-#               Update Permissions
-#The tomcat user that we set up needs to have access to the Tomcat installation. We'll set that up now.
-#Change to the directory where we unpacked the Tomcat installation:
-cd /opt/tomcat
-#Give the tomcat group ownership over the entire installation directory:
-sudo chgrp -R tomcat /opt/tomcat
-#Next, give the tomcat group read access to the conf directory and all of its contents, and execute access to the directory itself:
-sudo chmod -R g+r conf
-sudo chmod g+x conf
-#Make the tomcat user the owner of the webapps, work, temp, and logs directories:
-sudo chown -R tomcat webapps/ work/ temp/ logs/ bin/ conf/
 #Now that the proper permissions are set up, we can create a systemd service file to manage the Tomcat process.
 #               Create a systemd Service File
 #We want to be able to run Tomcat as a service, so we will set up systemd service file.
@@ -102,7 +103,7 @@ sudo systemctl status tomcat
 #                Clone hapi-fhir into folder of your choice
 # 
 # mkdir hapifhir
-# git clone https://github.com/ITINordic/hapi-fhir-jpaserver-rirmis.git
+git clone https://github.com/ITINordic/hapi-fhir-jpaserver-rirmis.git
 # 
 # 
 #     • Configure custom changes in hapi-fhir for the required database and dependencies (Changes dependant on version of hapi-fhir)
@@ -111,18 +112,17 @@ sudo systemctl status tomcat
 # 
 # move to projet home folder(this case)
 # 
-cd hapi/hapi-fhir-jpaserver/
-
+cd ~/hapi-fhir-jpaserver-rirmis
 # MANUAL INSTALL
 # 
 # open and add postgres dependency and properties in project
 # 
 # pom.xml
-# hapi.properties
-# HapiProperties.java
-# ExampleServerDstu2IT.java
-# ExampleServerDstu3IT.java
-# ExampleServerR4IT.java
+# src/main/resources/hapi.properties
+# src/main/java/ca/uhn/fhir/jpa/starter/HapiProperties.java
+# src/test/java/ca/uhn/fhir/jpa/starter/ExampleServerDstu2IT.java
+# src/test/java/ca/uhn/fhir/jpa/starter/ExampleServerDstu3IT.java
+# src/test/java/ca/uhn/fhir/jpa/starter/ExampleServerR4IT.java
 # 
 # 
 # move back to the project diretory(hapi-fhir-jpaserver-starter), build and install the war
@@ -149,7 +149,7 @@ mvn install
 # 
 # navigate back to the project home folder and rebuild the war file.(this time without the tests)
 # 
-mvn package
+mkdir -p /opt/tomcat/bin/target/lucenefiles
 # 
 # you get the following as output if successful:
 # ------------------------------------------------------------------------
@@ -170,7 +170,19 @@ sudo mv hapi-fhir-jpaserver.war /opt/tomcat/webapps/
 # 
 # reload the tomcat daemon activities, and restart tomcat
 # 
-sudo systemctl daemon-reload
+#Next, we can set up the proper user permissions for our installation.
+
+#               Update Permissions
+#The tomcat user that we set up needs to have access to the Tomcat installation. We'll set that up now.
+#Change to the directory where we unpacked the Tomcat installation:
+cd /opt/tomcat
+#Give the tomcat group ownership over the entire installation directory:
+#Next, give the tomcat group read access to the conf directory and all of its contents, and execute access to the directory itself:
+sudo chmod -R g+r conf
+sudo chmod g+x conf
+#Make the tomcat user the owner of the webapps, work, temp, and logs directories:
+sudo chown -R tomcat:tomcat webapps/ work/ temp/ logs/ bin/ conf/
+
 sudo systemctl restart tomcat
 # 
 # then access the server as:

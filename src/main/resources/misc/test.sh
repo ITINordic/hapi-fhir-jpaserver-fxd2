@@ -1,0 +1,1 @@
+echo $PGPASSWD >> test.result.txt

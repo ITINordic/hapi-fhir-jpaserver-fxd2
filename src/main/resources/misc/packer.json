@@ -1,0 +1,27 @@
+{
+    "variables": {
+        "pgusername": "{{env `PGUSERNAME`}}",
+        "pgpasswd": "{{env `PGPASSWD`}}"
+    },
+    "builders": [
+        {
+            "type": "lxd",
+            "name": "lxd-bionic",
+            "image": "ubuntu-daily:bionic",
+            "output_image": "ubuntu-bionic",
+            "publish_properties": {
+                "description": "HAPI-FHIR Image"
+            }
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "shell",
+            "script": "test.sh",
+            "environment_vars": [
+                "PGUSERNAME={{user `pgusername`}}",
+                "PGUSERNAME={{user `pgusername`}}"
+            ]
+        }
+    ]
+}
