@@ -48,11 +48,20 @@ public class DHIS2HttpUtility {
     public static String httpPost(String url, String body, String authorization, Map<String, String> headers) throws UnsupportedEncodingException, IOException {
         HttpClient httpClient = HttpClients.createDefault();
         HttpPost httppost = new HttpPost(url);
-        httppost.addHeader("Authorization", authorization);
-        headers.keySet().forEach((key) -> {
-            httppost.addHeader(key, headers.get(key));
-        });
-        httppost.setEntity(new StringEntity(body, "UTF-8"));
+        if (!GeneralUtility.isEmpty(authorization)) {
+            httppost.addHeader("Authorization", authorization);
+        }
+
+        if (!GeneralUtility.isEmpty(headers)) {
+            headers.keySet().forEach((key) -> {
+                httppost.addHeader(key, headers.get(key));
+            });
+        }
+
+        if (!GeneralUtility.isEmpty(body)) {
+            httppost.setEntity(new StringEntity(body, "UTF-8"));
+        }
+
         HttpResponse response = httpClient.execute(httppost);
         return parseStringContent(response);
     }
@@ -60,10 +69,15 @@ public class DHIS2HttpUtility {
     public static String httpPost(String url, List<NameValuePair> params, String authorization, Map<String, String> headers) throws UnsupportedEncodingException, IOException {
         HttpClient httpClient = HttpClients.createDefault();
         HttpPost httppost = new HttpPost(url);
-        httppost.addHeader("Authorization", authorization);
-        headers.keySet().forEach((key) -> {
-            httppost.addHeader(key, headers.get(key));
-        });
+        if (!GeneralUtility.isEmpty(authorization)) {
+            httppost.addHeader("Authorization", authorization);
+        }
+
+        if (!GeneralUtility.isEmpty(headers)) {
+            headers.keySet().forEach((key) -> {
+                httppost.addHeader(key, headers.get(key));
+            });
+        }
         if (!GeneralUtility.isEmpty(params)) {
             httppost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
         }
@@ -74,7 +88,10 @@ public class DHIS2HttpUtility {
     public static String httpGet(String url, String authorization, Map<String, String> headers) throws UnsupportedEncodingException, IOException {
         HttpClient httpClient = HttpClients.createDefault();
         HttpGet httpGet = new HttpGet(url);
-        httpGet.addHeader("Authorization", authorization);
+        if (!GeneralUtility.isEmpty(authorization)) {
+            httpGet.addHeader("Authorization", authorization);
+        }
+        
         if (!GeneralUtility.isEmpty(headers)) {
             headers.keySet().forEach((key) -> {
                 httpGet.addHeader(key, headers.get(key));
@@ -102,11 +119,11 @@ public class DHIS2HttpUtility {
         if (entity != null) {
             try (InputStream instream = entity.getContent()) {
                 content = IOUtils.toString(instream, "UTF-8");
-                System.out.println("DHIS2 Content=" + content);
+                System.out.println("Content=" + content);
             }
         }
         int statusCode = response.getStatusLine().getStatusCode();
-        System.out.println("DHIS2 StatusCode=" + statusCode);
+        System.out.println("StatusCode=" + statusCode);
         if (statusCode == 401 || statusCode == 403) {
             throw new UnauthorizedApiException(String.valueOf(statusCode), content);
         } else if (statusCode >= 300) {

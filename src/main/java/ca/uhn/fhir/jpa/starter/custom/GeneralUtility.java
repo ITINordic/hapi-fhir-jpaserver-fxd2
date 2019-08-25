@@ -26,6 +26,7 @@ package ca.uhn.fhir.jpa.starter.custom;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.Map;
+import org.hl7.fhir.r4.model.QuestionnaireResponse;
 
 /**
  *
@@ -53,8 +54,7 @@ public class GeneralUtility {
         return collection==null || collection.isEmpty();
     }
     
-     public static boolean isEmpty(Map<?,?> map){
+    public static boolean isEmpty(Map<?,?> map){
         return map==null || map.isEmpty();
     }
-
 }

@@ -403,6 +403,11 @@ public class HapiProperties {
     public static String getCustomDhis2ClientUid() {
         return HapiProperties.getProperty("custom.dhis.client.uid");
     }
+    
+     public static String getCustomDhisFhirAdapterBaseUrl() {
+        return HapiProperties.getProperty("custom.dhis.fhir.adapter.base_url");
+    }
+    
 
     public static Long getReuseCachedSearchResultsMillis() {
         String value = HapiProperties.getProperty(REUSE_CACHED_SEARCH_RESULTS_MILLIS, "-1");
