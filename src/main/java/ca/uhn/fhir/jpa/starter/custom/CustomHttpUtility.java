@@ -43,7 +43,7 @@ import org.apache.http.impl.client.HttpClients;
  *
  * @author Charles Chigoriwa
  */
-public class DHIS2HttpUtility {
+public class CustomHttpUtility {
 
     public static String httpPost(String url, String body, String authorization, Map<String, String> headers) throws UnsupportedEncodingException, IOException {
         HttpClient httpClient = HttpClients.createDefault();

@@ -52,7 +52,7 @@ public class DHIS2TokenUtility {
             params.add(new BasicNameValuePair("password", password));
             Map<String, String> headers = new HashMap<>();
             headers.put("Accept", "application/json");
-            String responseBody = DHIS2HttpUtility.httpPost(url, params, basicAuthorization, headers);
+            String responseBody = CustomHttpUtility.httpPost(url, params, basicAuthorization, headers);
             return toTokenWrapper(responseBody);
         } catch (IOException ex) {
             throw new FrismException(ex);
@@ -74,7 +74,7 @@ public class DHIS2TokenUtility {
             params.add(new BasicNameValuePair("refresh_token", refreshToken));
             Map<String, String> headers = new HashMap<>();
             headers.put("Accept", "application/json");
-            String responseBody = DHIS2HttpUtility.httpPost(url, params, basicAuthorization, headers);
+            String responseBody = CustomHttpUtility.httpPost(url, params, basicAuthorization, headers);
             return toTokenWrapper(responseBody);
         } catch (IOException ex) {
             throw new FrismException(ex);

@@ -78,7 +78,7 @@ public class DHIS2DataSenderInterceptor extends InterceptorAdapter {
                     url = baseUrl + url;
                     String authorization = "Bearer jhsj832jDShf8ehShdu7ejhDhsilwmdsgs";
                     try {
-                        DHIS2HttpUtility.httpPost(url, resourceInString, authorization, Collections.singletonMap("Content-Type", "application/json"));
+                        CustomHttpUtility.httpPost(url, resourceInString, authorization, Collections.singletonMap("Content-Type", "application/json"));
                     } catch (IOException | ApiException ex) {
                         logger.error("Error saving a resource in dhis", ex);
                     }

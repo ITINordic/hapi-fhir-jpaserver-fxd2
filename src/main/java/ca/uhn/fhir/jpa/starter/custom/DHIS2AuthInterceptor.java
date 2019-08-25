@@ -77,7 +77,7 @@ public class DHIS2AuthInterceptor extends AuthorizationInterceptor {
     private boolean checkAuthorization(String authorization) {
         String url = HapiProperties.getCustomDhis2BaseUrl() + "/api/me";
         try {
-            DHIS2HttpUtility.httpGet(url, authorization);
+            CustomHttpUtility.httpGet(url, authorization);
             return true;
         } catch (UnauthorizedApiException ex) {
             return false;
