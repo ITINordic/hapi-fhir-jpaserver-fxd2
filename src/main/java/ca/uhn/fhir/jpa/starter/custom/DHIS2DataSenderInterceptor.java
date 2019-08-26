@@ -66,7 +66,9 @@ public class DHIS2DataSenderInterceptor extends InterceptorAdapter {
                 }
 
                 if (!GeneralUtility.isEmpty(clientResourceId)) {
+                    boolean useUserAuthorization = false;
                     FhirContext fireContext = theRequestDetails.getFhirContext();
+                    String authorization = theRequestDetails.getHeader("Authorization");
                     JsonParser jsonParser = new JsonParser(fireContext, new LenientErrorHandler());
                     String clientId = "73cd99c5-0ca8-42ad-a53b-1891fccce08f";
                     String resourceId = resource.getIdElement().getIdPart();
@@ -76,7 +78,9 @@ public class DHIS2DataSenderInterceptor extends InterceptorAdapter {
                     String baseUrl = HapiProperties.getCustomDhisFhirAdapterBaseUrl();
                     baseUrl = GeneralUtility.isEmpty(baseUrl) ? "http://localhost:8081" : baseUrl;
                     url = baseUrl + url;
-                    String authorization = "Bearer jhsj832jDShf8ehShdu7ejhDhsilwmdsgs";
+                    if (!useUserAuthorization) {
+                        authorization = "Bearer jhsj832jDShf8ehShdu7ejhDhsilwmdsgs";
+                    }
                     try {
                         CustomHttpUtility.httpPost(url, resourceInString, authorization, Collections.singletonMap("Content-Type", "application/json"));
                     } catch (IOException | ApiException ex) {
