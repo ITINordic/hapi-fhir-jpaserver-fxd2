@@ -16,8 +16,8 @@ import ca.uhn.fhir.jpa.provider.r4.JpaSystemProviderR4;
 import ca.uhn.fhir.jpa.provider.r4.TerminologyUploaderProviderR4;
 import ca.uhn.fhir.jpa.search.DatabaseBackedPagingProvider;
 import ca.uhn.fhir.jpa.starter.custom.DHIS2AuthInterceptor;
-import ca.uhn.fhir.jpa.starter.custom.DHIS2AuthenticationProvider;
 import ca.uhn.fhir.jpa.starter.custom.DHIS2DataSenderInterceptor;
+import ca.uhn.fhir.jpa.starter.custom.FhirDataValidationInterceptor;
 import ca.uhn.fhir.jpa.subscription.SubscriptionInterceptorLoader;
 import ca.uhn.fhir.jpa.subscription.module.interceptor.SubscriptionDebugLogInterceptor;
 import ca.uhn.fhir.model.dstu2.composite.MetaDt;
@@ -209,7 +209,7 @@ public class JpaRestfulServer extends RestfulServer {
             interceptorService.registerInterceptor(new SubscriptionDebugLogInterceptor());
         }
         
-        //Custom:: Register DHIS2 Authentication Interceptor
+        //Custom:: Register Custom Interceptors
         registerInterceptor(new DHIS2AuthInterceptor());
         registerInterceptor(new DHIS2DataSenderInterceptor());
         

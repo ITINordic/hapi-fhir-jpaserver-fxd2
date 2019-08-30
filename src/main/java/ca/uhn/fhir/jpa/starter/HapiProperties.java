@@ -1,12 +1,12 @@
 /* The following is the attached license for modifications done by ITINORDIC*/
 
-/*
+ /*
   * Modifications from ITINORDIC are as follows
   *1. Added Dynamic resolution of properties
   *2. Added DHIS2 (custom) properties for authentication and authorization
-*/
+ */
 
-/*
+ /*
  *BSD 2-Clause License
  *
  *Copyright (c) 2019, itinordic All rights reserved.
@@ -29,7 +29,6 @@
  *IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
  *THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **/
-
 package ca.uhn.fhir.jpa.starter;
 
 import ca.uhn.fhir.context.ConfigurationException;
@@ -403,11 +402,14 @@ public class HapiProperties {
     public static String getCustomDhis2ClientUid() {
         return HapiProperties.getProperty("custom.dhis.client.uid");
     }
-    
-     public static String getCustomDhisFhirAdapterBaseUrl() {
+
+    public static String getCustomDhisFhirAdapterBaseUrl() {
         return HapiProperties.getProperty("custom.dhis.fhir.adapter.base_url");
     }
-    
+
+    public static String getCustomLocalServerAddress() {
+        return HapiProperties.getProperty("custom.local.server_address");
+    }
 
     public static Long getReuseCachedSearchResultsMillis() {
         String value = HapiProperties.getProperty(REUSE_CACHED_SEARCH_RESULTS_MILLIS, "-1");
