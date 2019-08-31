@@ -29,6 +29,7 @@ public class CustomInterceptorAdapter extends InterceptorAdapter {
     protected final static String RESOURCE_BEFORE_UPDATE = "FrismResourceBeforeUpdate";
     protected final static String FRISM_HINT = "FrismHint";
     protected final static String NO_DHIS_SAVE = "NO_DHIS_SAVE";
+    protected final static String DHIS_SAVED_EXTENSION_URL = "urn:dhis:saved";
 
     protected IGenericClient getFhirClient(FhirContext fhirContext, String authorization) {
         String customLocalServerAddress = HapiProperties.getCustomLocalServerAddress();
@@ -133,7 +134,7 @@ public class CustomInterceptorAdapter extends InterceptorAdapter {
         IBaseExtension extension = getDhisSavedExtension(resource);
         if (extension == null) {
             extension = resourceWithExtension.addExtension();
-            extension.setUrl("urn:dhis:saved");
+            extension.setUrl(DHIS_SAVED_EXTENSION_URL);
         }
         extension.setValue(new BooleanDt(saved));
 
@@ -143,7 +144,7 @@ public class CustomInterceptorAdapter extends InterceptorAdapter {
         IBaseHasExtensions resourceWithExtension = (IBaseHasExtensions) resource;
         List<? extends IBaseExtension<?, ?>> extensions = resourceWithExtension.getExtension();
         for (IBaseExtension extension : extensions) {
-            if (extension.getUrl().equalsIgnoreCase("urn:dhis:saved")) {
+            if (extension.getUrl().equals(DHIS_SAVED_EXTENSION_URL)) {
                 return extension;
             }
         }
