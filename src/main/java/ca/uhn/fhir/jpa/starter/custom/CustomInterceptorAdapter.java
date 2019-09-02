@@ -191,8 +191,8 @@ public class CustomInterceptorAdapter extends InterceptorAdapter {
         }
         return adapterParam;
     }
-    
-     protected boolean strictErrorHandling(RequestDetails theRequestDetails, ResponseDetails theResponseDetails, HttpServletRequest theServletRequest, HttpServletResponse theServletResponse) {
+
+    protected boolean strictErrorHandling(RequestDetails theRequestDetails, ResponseDetails theResponseDetails, HttpServletRequest theServletRequest, HttpServletResponse theServletResponse) {
         RestOperationTypeEnum restOperationType = theRequestDetails.getRestOperationType();
         if (restOperationType.equals(RestOperationTypeEnum.CREATE)) {
             deleteResource(theRequestDetails, theResponseDetails);
@@ -221,6 +221,5 @@ public class CustomInterceptorAdapter extends InterceptorAdapter {
         }
         return true;
     }
-
 
 }
