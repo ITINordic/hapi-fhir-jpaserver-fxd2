@@ -47,8 +47,6 @@ import org.slf4j.LoggerFactory;
  */
 public class DHIS2DataSenderInterceptor extends CustomInterceptorAdapter {
 
-   
-
     protected static Logger logger = LoggerFactory.getLogger(DHIS2DataSenderInterceptor.class);
 
     //This method is called just before the actual implementing server method is invoked.
@@ -114,54 +112,33 @@ public class DHIS2DataSenderInterceptor extends CustomInterceptorAdapter {
         if (restOperationType.equals(RestOperationTypeEnum.CREATE) || restOperationType.equals(RestOperationTypeEnum.UPDATE)) {
             IBaseResource resource = theResponseDetails.getResponseResource();
             if (resource != null) {
-                String resourceClassName = resource.getClass().getSimpleName();
-                String clientResourceId = null;
-                if (resourceClassName.equalsIgnoreCase("patient")) {
-                    clientResourceId = "667bfa41-867c-4796-86b6-eb9f9ed4dc94";
-                } else if (resourceClassName.equalsIgnoreCase("carePlan")) {
-                    clientResourceId = "b28e733c-8aee-11e9-9928-4736812fb4de";
-                } else if (resourceClassName.equalsIgnoreCase("questionnaireResponse")) {
-                    clientResourceId = "056c3922-8e64-11e9-a6cb-6ba3fca8a311";
-                }
-
+                AdapterParam adapterParam = getAdapterParam(theRequestDetails, theResponseDetails);
+                String clientResourceId = adapterParam.getClientResourceId();
                 if (!GeneralUtility.isEmpty(clientResourceId)) {
-                    boolean useUserAuthorization = true;
-                    FhirContext fhirContext = theRequestDetails.getFhirContext();
                     String authorization = theRequestDetails.getHeader("Authorization");
-                    JsonParser jsonParser = new JsonParser(fhirContext, new LenientErrorHandler());
-                    String clientId = "73cd99c5-0ca8-42ad-a53b-1891fccce08f";
-                    String resourceId = resource.getIdElement().getIdPart();
-                    String resourceInString = jsonParser.encodeResourceToString(resource);
-                    String resourceType = resourceClassName;
-                    //String url = "/remote-fhir-rest-hook/" + clientId + "/" + clientResourceId + "/" + resourceType + "/" + resourceId;
+                    String clientId = adapterParam.getClientId();
+                    String resourceId = adapterParam.getResourceId();
+                    String resourceInString = adapterParam.getResourceInString();
+                    String resourceType = adapterParam.getResourceType();
                     String url = "/remote-fhir-express/" + clientId + "/" + clientResourceId + "/" + resourceType + "/" + resourceId;
-                    String baseUrl = HapiProperties.getCustomDhisFhirAdapterBaseUrl();
-                    baseUrl = GeneralUtility.isEmpty(baseUrl) ? "http://localhost:8081" : baseUrl;
+                    String baseUrl = adapterParam.getBaseUrl();
                     url = baseUrl + url;
-                    if (!useUserAuthorization) {
-                        authorization = "Bearer jhsj832jDShf8ehShdu7ejhDhsilwmdsgs";
-                    }
                     boolean savedInDhis;
+                    boolean normalProceeding = true;
                     try {
                         CustomHttpUtility.httpPost(url, resourceInString, authorization, Collections.singletonMap("Content-Type", "application/json"));
                         savedInDhis = true;
                     } catch (IOException | ApiException ex) {
-                        savedInDhis=false;
+                        savedInDhis = false;
                         logger.error("Error saving a resource in dhis", ex);
-                        if (restOperationType.equals(RestOperationTypeEnum.CREATE)) {
-                            deleteResource(theRequestDetails, theResponseDetails);
-                            createBadRequestResponse(theServletResponse, "Failed to save data in dhis. FhirResource deleted.");
-                        } else {
-                            revertResourceToBeforeUpdate(theRequestDetails);
-                            createBadRequestResponse(theServletResponse, "Failed to save data in dhis. Reverted to previous resource version.");
-                        }
+                        normalProceeding = strictErrorHandling(theRequestDetails, theResponseDetails, theServletRequest, theServletResponse);
                     }
-                    
-                    if(savedInDhis){
+
+                    if (savedInDhis) {
                         saveAsDhisSaved(theRequestDetails, theResponseDetails);
                     }
-                    
-                    return savedInDhis;
+
+                    return normalProceeding;
 
                 }
 
@@ -173,7 +150,6 @@ public class DHIS2DataSenderInterceptor extends CustomInterceptorAdapter {
     }
 
    
-
    
 
 }

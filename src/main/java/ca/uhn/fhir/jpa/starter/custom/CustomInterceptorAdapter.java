@@ -3,6 +3,9 @@ package ca.uhn.fhir.jpa.starter.custom;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.jpa.starter.HapiProperties;
 import ca.uhn.fhir.model.primitive.BooleanDt;
+import ca.uhn.fhir.parser.JsonParser;
+import ca.uhn.fhir.parser.LenientErrorHandler;
+import ca.uhn.fhir.rest.api.RestOperationTypeEnum;
 import ca.uhn.fhir.rest.api.server.RequestDetails;
 import ca.uhn.fhir.rest.api.server.ResponseDetails;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
@@ -13,6 +16,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Nonnull;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.hl7.fhir.instance.model.api.IBaseExtension;
 import org.hl7.fhir.instance.model.api.IBaseHasExtensions;
@@ -159,5 +163,64 @@ public class CustomInterceptorAdapter extends InterceptorAdapter {
             return ((BooleanDt) extension.getValue()).getValue();
         }
     }
+
+    protected AdapterParam getAdapterParam(RequestDetails theRequestDetails, ResponseDetails theResponseDetails) {
+        AdapterParam adapterParam = new AdapterParam();
+        IBaseResource resource = theResponseDetails.getResponseResource();
+        String resourceClassName = resource.getClass().getSimpleName();
+        String clientResourceId = null;
+        if (resourceClassName.equalsIgnoreCase("patient")) {
+            clientResourceId = "667bfa41-867c-4796-86b6-eb9f9ed4dc94";
+        } else if (resourceClassName.equalsIgnoreCase("carePlan")) {
+            clientResourceId = "b28e733c-8aee-11e9-9928-4736812fb4de";
+        } else if (resourceClassName.equalsIgnoreCase("questionnaireResponse")) {
+            clientResourceId = "056c3922-8e64-11e9-a6cb-6ba3fca8a311";
+        }
+
+        adapterParam.setClientResourceId(clientResourceId);
+        if (!GeneralUtility.isEmpty(clientResourceId)) {
+            FhirContext fhirContext = theRequestDetails.getFhirContext();
+            JsonParser jsonParser = new JsonParser(fhirContext, new LenientErrorHandler());
+            adapterParam.setClientId("73cd99c5-0ca8-42ad-a53b-1891fccce08f");
+            adapterParam.setResourceId(resource.getIdElement().getIdPart());
+            adapterParam.setResourceInString(jsonParser.encodeResourceToString(resource));
+            adapterParam.setResourceType(resourceClassName);
+            String baseUrl = HapiProperties.getCustomDhisFhirAdapterBaseUrl();
+            baseUrl = GeneralUtility.isEmpty(baseUrl) ? "http://localhost:8081" : baseUrl;
+            adapterParam.setBaseUrl(baseUrl);
+        }
+        return adapterParam;
+    }
+    
+     protected boolean strictErrorHandling(RequestDetails theRequestDetails, ResponseDetails theResponseDetails, HttpServletRequest theServletRequest, HttpServletResponse theServletResponse) {
+        RestOperationTypeEnum restOperationType = theRequestDetails.getRestOperationType();
+        if (restOperationType.equals(RestOperationTypeEnum.CREATE)) {
+            deleteResource(theRequestDetails, theResponseDetails);
+            createBadRequestResponse(theServletResponse, "Failed to save data in dhis. FhirResource deleted.");
+        } else {
+            revertResourceToBeforeUpdate(theRequestDetails);
+            createBadRequestResponse(theServletResponse, "Failed to save data in dhis. Reverted to previous resource version.");
+        }
+        return false;
+    }
+
+    protected boolean lenientErrorHandling(AdapterParam adapterParam, RequestDetails theRequestDetails, ResponseDetails theResponseDetails, HttpServletRequest theServletRequest, HttpServletResponse theServletResponse) {
+        String clientId = adapterParam.getClientId();
+        String clientResourceId = adapterParam.getClientResourceId();
+        String resourceId = adapterParam.getResourceId();
+        String resourceInString = adapterParam.getResourceInString();
+        String resourceType = adapterParam.getResourceType();
+        String url = "/remote-fhir-rest-hook/" + clientId + "/" + clientResourceId + "/" + resourceType + "/" + resourceId;
+        String baseUrl = adapterParam.getBaseUrl();
+        url = baseUrl + url;
+        String authorization = "Bearer jhsj832jDShf8ehShdu7ejhDhsilwmdsgs";
+        try {
+            CustomHttpUtility.httpPost(url, resourceInString, authorization, Collections.singletonMap("Content-Type", "application/json"));
+        } catch (IOException | ApiException ex) {
+            //Ignore this error
+        }
+        return true;
+    }
+
 
 }
