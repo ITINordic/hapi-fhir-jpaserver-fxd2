@@ -163,7 +163,7 @@ public class CustomInterceptorAdapter extends InterceptorAdapter {
         }
     }
 
-    protected AdapterResource getAdapterResource(RequestDetails theRequestDetails, ResponseDetails theResponseDetails) {
+    protected AdapterResource createAdapterResource(RequestDetails theRequestDetails, ResponseDetails theResponseDetails) {
         AdapterResource adapterResource = new AdapterResource();
         IBaseResource resource = theResponseDetails.getResponseResource();
         String resourceClassName = resource.getClass().getSimpleName();

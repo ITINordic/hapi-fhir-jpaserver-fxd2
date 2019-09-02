@@ -109,7 +109,7 @@ public class DHIS2DataSenderInterceptor extends CustomInterceptorAdapter {
         if (restOperationType.equals(RestOperationTypeEnum.CREATE) || restOperationType.equals(RestOperationTypeEnum.UPDATE)) {
             IBaseResource resource = theResponseDetails.getResponseResource();
             if (resource != null) {
-                AdapterResource adapterResource = getAdapterResource(theRequestDetails, theResponseDetails);
+                AdapterResource adapterResource = createAdapterResource(theRequestDetails, theResponseDetails);
                 String clientResourceId = adapterResource.getClientResourceId();
                 if (!GeneralUtility.isEmpty(clientResourceId)) {
                     String authorization = theRequestDetails.getHeader(AUTHORIZATION_HEADER);
