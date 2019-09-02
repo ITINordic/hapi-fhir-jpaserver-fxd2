@@ -112,16 +112,16 @@ public class DHIS2DataSenderInterceptor extends CustomInterceptorAdapter {
         if (restOperationType.equals(RestOperationTypeEnum.CREATE) || restOperationType.equals(RestOperationTypeEnum.UPDATE)) {
             IBaseResource resource = theResponseDetails.getResponseResource();
             if (resource != null) {
-                AdapterParam adapterParam = getAdapterParam(theRequestDetails, theResponseDetails);
-                String clientResourceId = adapterParam.getClientResourceId();
+                AdapterResource adapterResource = getAdapterResource(theRequestDetails, theResponseDetails);
+                String clientResourceId = adapterResource.getClientResourceId();
                 if (!GeneralUtility.isEmpty(clientResourceId)) {
-                    String authorization = theRequestDetails.getHeader("Authorization");
-                    String clientId = adapterParam.getClientId();
-                    String resourceId = adapterParam.getResourceId();
-                    String resourceInString = adapterParam.getResourceInString();
-                    String resourceType = adapterParam.getResourceType();
+                    String authorization = theRequestDetails.getHeader(AUTHORIZATION_HEADER);
+                    String clientId = adapterResource.getClientId();
+                    String resourceId = adapterResource.getResourceId();
+                    String resourceInString = adapterResource.getResourceInString();
+                    String resourceType = adapterResource.getResourceType();
                     String url = "/remote-fhir-express/" + clientId + "/" + clientResourceId + "/" + resourceType + "/" + resourceId;
-                    String baseUrl = adapterParam.getBaseUrl();
+                    String baseUrl = adapterResource.getBaseUrl();
                     url = baseUrl + url;
                     boolean savedInDhis;
                     boolean normalProceeding = true;

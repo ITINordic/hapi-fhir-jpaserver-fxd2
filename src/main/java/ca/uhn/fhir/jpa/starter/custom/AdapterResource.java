@@ -4,7 +4,7 @@ package ca.uhn.fhir.jpa.starter.custom;
  *
  * @author Charles Chigoriwa
  */
-public class AdapterParam {
+public class AdapterResource {
     
     private String clientId;
     private String resourceClassName;
@@ -14,7 +14,7 @@ public class AdapterParam {
     private String clientResourceId;
     private String resourceId;
 
-    public AdapterParam() {
+    public AdapterResource() {
     }
 
 

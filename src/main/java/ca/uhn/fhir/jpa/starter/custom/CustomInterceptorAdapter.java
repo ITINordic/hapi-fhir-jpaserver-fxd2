@@ -34,6 +34,7 @@ public class CustomInterceptorAdapter extends InterceptorAdapter {
     protected final static String FRISM_HINT = "FrismHint";
     protected final static String NO_DHIS_SAVE = "NO_DHIS_SAVE";
     protected final static String DHIS_SAVED_EXTENSION_URL = "urn:dhis:saved";
+    protected final static String AUTHORIZATION_HEADER="Authorization";
 
     protected IGenericClient getFhirClient(FhirContext fhirContext, String authorization) {
         String customLocalServerAddress = HapiProperties.getCustomLocalServerAddress();
@@ -51,7 +52,7 @@ public class CustomInterceptorAdapter extends InterceptorAdapter {
 
     protected void deleteResource(RequestDetails theRequestDetails, ResponseDetails theResponseDetails) {
         IBaseResource resource = theResponseDetails.getResponseResource();
-        String authorization = theRequestDetails.getHeader("Authorization");
+        String authorization = theRequestDetails.getHeader(AUTHORIZATION_HEADER);
         FhirContext fhirContext = theRequestDetails.getFhirContext();
         IGenericClient client = getFhirClient(fhirContext, authorization, Collections.singletonMap(FRISM_HINT, NO_DHIS_SAVE));
         client.delete()
@@ -63,7 +64,7 @@ public class CustomInterceptorAdapter extends InterceptorAdapter {
         Object objectBeforeUpdate = theRequestDetails.getUserData().get(RESOURCE_BEFORE_UPDATE);
         if (objectBeforeUpdate != null && objectBeforeUpdate instanceof IBaseResource) {
             IBaseResource resourceBeforeUpdate = (IBaseResource) objectBeforeUpdate;
-            String authorization = theRequestDetails.getHeader("Authorization");
+            String authorization = theRequestDetails.getHeader(AUTHORIZATION_HEADER);
             FhirContext fhirContext = theRequestDetails.getFhirContext();
             IGenericClient client = getFhirClient(fhirContext, authorization, Collections.singletonMap(FRISM_HINT, NO_DHIS_SAVE));
             client.update().resource(resourceBeforeUpdate).execute();
@@ -74,7 +75,7 @@ public class CustomInterceptorAdapter extends InterceptorAdapter {
         IBaseResource resource = theResponseDetails.getResponseResource();
         if (resource != null) {
             setDhisSavedExtension(resource, true);
-            String authorization = theRequestDetails.getHeader("Authorization");
+            String authorization = theRequestDetails.getHeader(AUTHORIZATION_HEADER);
             FhirContext fhirContext = theRequestDetails.getFhirContext();
             IGenericClient client = getFhirClient(fhirContext, authorization, Collections.singletonMap(FRISM_HINT, NO_DHIS_SAVE));
             client.update().resource(resource).execute();
@@ -107,15 +108,13 @@ public class CustomInterceptorAdapter extends InterceptorAdapter {
 
     protected IBaseResource getResourceForReset(RequestDetails theRequestDetails, ResponseDetails theResponseDetails) {
         IBaseResource resourceBeforeUpdate = (IBaseResource) theRequestDetails.getUserData().get(RESOURCE_BEFORE_UPDATE);
-        String authorization = theRequestDetails.getHeader("Authorization");
+        String authorization = theRequestDetails.getHeader(AUTHORIZATION_HEADER);
         FhirContext fhirContext = theRequestDetails.getFhirContext();
         IGenericClient client = getFhirClient(fhirContext, authorization, Collections.singletonMap(FRISM_HINT, NO_DHIS_SAVE));
-
         Bundle response = client.history().onInstance(resourceBeforeUpdate.getIdElement())
                 .andReturnBundle(Bundle.class).count(1000).since(resourceBeforeUpdate.getMeta().getLastUpdated()).execute();
-
+       
         List<IBaseResource> resources = new ArrayList<>();
-
         if (!GeneralUtility.isEmpty(response.getEntry())) {
             response.getEntry().forEach((entry) -> {
                 resources.add(entry.getResource());
@@ -164,8 +163,8 @@ public class CustomInterceptorAdapter extends InterceptorAdapter {
         }
     }
 
-    protected AdapterParam getAdapterParam(RequestDetails theRequestDetails, ResponseDetails theResponseDetails) {
-        AdapterParam adapterParam = new AdapterParam();
+    protected AdapterResource getAdapterResource(RequestDetails theRequestDetails, ResponseDetails theResponseDetails) {
+        AdapterResource adapterResource = new AdapterResource();
         IBaseResource resource = theResponseDetails.getResponseResource();
         String resourceClassName = resource.getClass().getSimpleName();
         String clientResourceId = null;
@@ -177,19 +176,19 @@ public class CustomInterceptorAdapter extends InterceptorAdapter {
             clientResourceId = "056c3922-8e64-11e9-a6cb-6ba3fca8a311";
         }
 
-        adapterParam.setClientResourceId(clientResourceId);
+        adapterResource.setClientResourceId(clientResourceId);
         if (!GeneralUtility.isEmpty(clientResourceId)) {
             FhirContext fhirContext = theRequestDetails.getFhirContext();
             JsonParser jsonParser = new JsonParser(fhirContext, new LenientErrorHandler());
-            adapterParam.setClientId("73cd99c5-0ca8-42ad-a53b-1891fccce08f");
-            adapterParam.setResourceId(resource.getIdElement().getIdPart());
-            adapterParam.setResourceInString(jsonParser.encodeResourceToString(resource));
-            adapterParam.setResourceType(resourceClassName);
+            adapterResource.setClientId("73cd99c5-0ca8-42ad-a53b-1891fccce08f");
+            adapterResource.setResourceId(resource.getIdElement().getIdPart());
+            adapterResource.setResourceInString(jsonParser.encodeResourceToString(resource));
+            adapterResource.setResourceType(resourceClassName);
             String baseUrl = HapiProperties.getCustomDhisFhirAdapterBaseUrl();
             baseUrl = GeneralUtility.isEmpty(baseUrl) ? "http://localhost:8081" : baseUrl;
-            adapterParam.setBaseUrl(baseUrl);
+            adapterResource.setBaseUrl(baseUrl);
         }
-        return adapterParam;
+        return adapterResource;
     }
 
     protected boolean strictErrorHandling(RequestDetails theRequestDetails, ResponseDetails theResponseDetails, HttpServletRequest theServletRequest, HttpServletResponse theServletResponse) {
@@ -204,14 +203,14 @@ public class CustomInterceptorAdapter extends InterceptorAdapter {
         return false;
     }
 
-    protected boolean lenientErrorHandling(AdapterParam adapterParam, RequestDetails theRequestDetails, ResponseDetails theResponseDetails, HttpServletRequest theServletRequest, HttpServletResponse theServletResponse) {
-        String clientId = adapterParam.getClientId();
-        String clientResourceId = adapterParam.getClientResourceId();
-        String resourceId = adapterParam.getResourceId();
-        String resourceInString = adapterParam.getResourceInString();
-        String resourceType = adapterParam.getResourceType();
+    protected boolean lenientErrorHandling(AdapterResource adapterResource, RequestDetails theRequestDetails, ResponseDetails theResponseDetails, HttpServletRequest theServletRequest, HttpServletResponse theServletResponse) {
+        String clientId = adapterResource.getClientId();
+        String clientResourceId = adapterResource.getClientResourceId();
+        String resourceId = adapterResource.getResourceId();
+        String resourceInString = adapterResource.getResourceInString();
+        String resourceType = adapterResource.getResourceType();
         String url = "/remote-fhir-rest-hook/" + clientId + "/" + clientResourceId + "/" + resourceType + "/" + resourceId;
-        String baseUrl = adapterParam.getBaseUrl();
+        String baseUrl = adapterResource.getBaseUrl();
         url = baseUrl + url;
         String authorization = "Bearer jhsj832jDShf8ehShdu7ejhDhsilwmdsgs";
         try {
