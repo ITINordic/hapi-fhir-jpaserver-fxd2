@@ -21,27 +21,26 @@
  *IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
  *THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **/
-
 package ca.uhn.fhir.jpa.starter.custom;
 
-import ca.uhn.fhir.context.FhirContext;
-import static ca.uhn.fhir.jpa.starter.custom.DhisTokenUtility.getAccessTokenFromSecurityContext;
-import ca.uhn.fhir.rest.client.api.IGenericClient;
-import ca.uhn.fhir.rest.client.interceptor.BearerTokenAuthInterceptor;
-import ca.uhn.fhir.rest.server.util.ITestingUiClientFactory;
+import ca.uhn.fhir.rest.api.server.RequestDetails;
+import ca.uhn.fhir.rest.api.server.ResponseDetails;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  *
  * @author Charles Chigoriwa
  */
-public class AuthorizingTesterUiClientFactory implements ITestingUiClientFactory {
+public class StrictDhisDataSenderInterceptor extends DhisDataSenderInterceptor {
 
     @Override
-    public IGenericClient newClient(FhirContext theFhirContext, HttpServletRequest theRequest, String theServerBaseUrl) {
-        IGenericClient client = theFhirContext.newRestfulGenericClient(theServerBaseUrl);
-        client.registerInterceptor(new BearerTokenAuthInterceptor(getAccessTokenFromSecurityContext()));
-        return client;
+    protected boolean handleAdapterError(AdapterResource adapterResource, RequestDetails theRequestDetails, ResponseDetails theResponseDetails, HttpServletRequest theServletRequest, HttpServletResponse theServletResponse) {
+        return strictErrorHandling(theRequestDetails, theResponseDetails, theServletRequest, theServletResponse);
     }
 
+    @Override
+    protected boolean checkIfAdapterAndDhisAreRunning() {
+        return true;
+    }
 }

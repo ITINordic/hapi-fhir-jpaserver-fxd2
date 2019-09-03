@@ -42,13 +42,13 @@ import org.slf4j.LoggerFactory;
  *
  * @author Charles Chigoriwa
  */
-public class DHIS2DataSenderInterceptor extends CustomInterceptorAdapter {
+public abstract class DhisDataSenderInterceptor extends CustomInterceptorAdapter {
 
-    protected static Logger logger = LoggerFactory.getLogger(DHIS2DataSenderInterceptor.class);
+    protected static Logger logger = LoggerFactory.getLogger(DhisDataSenderInterceptor.class);
 
     //This method is called just before the actual implementing server method is invoked.
     @Override
-    public boolean incomingRequestPostProcessed(RequestDetails theRequestDetails, HttpServletRequest theRequest, HttpServletResponse theResponse) throws AuthenticationException {
+    public final boolean incomingRequestPostProcessed(RequestDetails theRequestDetails, HttpServletRequest theRequest, HttpServletResponse theResponse) throws AuthenticationException {
         RestOperationTypeEnum restOperationType = theRequestDetails.getRestOperationType();
         String frismHint = theRequestDetails.getHeader(FRISM_HINT);
         if (frismHint != null && frismHint.equalsIgnoreCase(NO_DHIS_SAVE)) {
@@ -56,18 +56,20 @@ public class DHIS2DataSenderInterceptor extends CustomInterceptorAdapter {
         }
 
         if (restOperationType.equals(RestOperationTypeEnum.CREATE) || restOperationType.equals(RestOperationTypeEnum.UPDATE)) {
-            String authorization = theRequestDetails.getHeader("Authorization");
-            if (isAdapterAndItsDhisRunning(authorization)) {
-                return true;
-            } else {
-                throw new CustomAbortException(500, "Fhir Adapter and/or its Dhis are not running");
+            if (checkIfAdapterAndDhisAreRunning()) {
+                String authorization = theRequestDetails.getHeader("Authorization");
+                if (isAdapterAndItsDhisRunning(authorization)) {
+                    return true;
+                } else {
+                    throw new CustomAbortException(500, "Fhir Adapter and/or its Dhis are not running");
+                }
             }
         }
         return true;
     }
 
     @Override
-    public void incomingRequestPreHandled(RestOperationTypeEnum theOperation, ActionRequestDetails theProcessedRequest) {
+    public final void incomingRequestPreHandled(RestOperationTypeEnum theOperation, ActionRequestDetails theProcessedRequest) {
         RequestDetails theRequestDetails = theProcessedRequest.getRequestDetails();
         String frismHint = theRequestDetails.getHeader(FRISM_HINT);
         if (frismHint != null && frismHint.equalsIgnoreCase(NO_DHIS_SAVE)) {
@@ -97,7 +99,7 @@ public class DHIS2DataSenderInterceptor extends CustomInterceptorAdapter {
     //This method is called after the server implementation method has been called, but before any attempt to stream the
     //response back to the client.
     @Override
-    public boolean outgoingResponse(RequestDetails theRequestDetails, ResponseDetails theResponseDetails, HttpServletRequest theServletRequest, HttpServletResponse theServletResponse)
+    public final boolean outgoingResponse(RequestDetails theRequestDetails, ResponseDetails theResponseDetails, HttpServletRequest theServletRequest, HttpServletResponse theServletResponse)
             throws AuthenticationException {
 
         String frismHint = theRequestDetails.getHeader(FRISM_HINT);
@@ -128,7 +130,7 @@ public class DHIS2DataSenderInterceptor extends CustomInterceptorAdapter {
                     } catch (IOException | ApiException ex) {
                         savedInDhis = false;
                         logger.error("Error saving a resource in dhis", ex);
-                        normalProceeding = strictErrorHandling(theRequestDetails, theResponseDetails, theServletRequest, theServletResponse);
+                        normalProceeding = handleAdapterError(adapterResource, theRequestDetails, theResponseDetails, theServletRequest, theServletResponse);
                     }
 
                     if (savedInDhis) {
@@ -146,7 +148,6 @@ public class DHIS2DataSenderInterceptor extends CustomInterceptorAdapter {
 
     }
 
-   
-   
-
+    protected abstract boolean handleAdapterError(AdapterResource adapterResource, RequestDetails theRequestDetails, ResponseDetails theResponseDetails, HttpServletRequest theServletRequest, HttpServletResponse theServletResponse);
+    protected abstract boolean checkIfAdapterAndDhisAreRunning();
 }

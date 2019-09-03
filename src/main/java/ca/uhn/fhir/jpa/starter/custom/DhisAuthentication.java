@@ -35,7 +35,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
  *
  * @author Charles Chigoriwa
  */
-public class DHIS2Authentication implements Authentication {
+public class DhisAuthentication implements Authentication {
 
     private Collection<? extends GrantedAuthority> authorities;
     private Object credentials;
@@ -43,7 +43,7 @@ public class DHIS2Authentication implements Authentication {
     private Object Principal;
     private boolean authenticated;
     private String name;
-    private DHIS2TokenWrapper dhis2TokenWrapper;
+    private DhisTokenWrapper dhis2TokenWrapper;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -100,17 +100,17 @@ public class DHIS2Authentication implements Authentication {
         this.name = name;
     }
 
-    public DHIS2TokenWrapper getDhis2TokenWrapper() {
+    public DhisTokenWrapper getDhis2TokenWrapper() {
         return dhis2TokenWrapper;
     }
 
-    public void setDhis2TokenWrapper(DHIS2TokenWrapper dhis2TokenWrapper) {
+    public void setDhis2TokenWrapper(DhisTokenWrapper dhis2TokenWrapper) {
         this.dhis2TokenWrapper = dhis2TokenWrapper;
     }
 
-    public static DHIS2Authentication valueOf(DHIS2TokenWrapper dhis2TokenWrapper) {
+    public static DhisAuthentication valueOf(DhisTokenWrapper dhis2TokenWrapper) {
         String username = dhis2TokenWrapper.getAccessToken() + ":" + dhis2TokenWrapper.getRefreshToken();
-        DHIS2Authentication auth = new DHIS2Authentication();
+        DhisAuthentication auth = new DhisAuthentication();
         auth.setAuthorities(getDefaultAuthorities());
         auth.setAuthenticated(true);
         auth.setName(username);

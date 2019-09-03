@@ -40,7 +40,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 public class SecSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    private DHIS2AuthenticationProvider dhis2AuthenticationProvider;
+    private DhisAuthenticationProvider dhis2AuthenticationProvider;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -70,7 +70,7 @@ public class SecSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public DHIS2AuthenticationProvider dhis2AuthenticationProvider() {
-        return new DHIS2AuthenticationProvider();
+    public DhisAuthenticationProvider dhis2AuthenticationProvider() {
+        return new DhisAuthenticationProvider();
     }
 }

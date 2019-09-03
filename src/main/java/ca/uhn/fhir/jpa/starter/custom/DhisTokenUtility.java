@@ -40,9 +40,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
  *
  * @author Charles Chigoriwa
  */
-public class DHIS2TokenUtility {
+public class DhisTokenUtility {
 
-    public static DHIS2TokenWrapper getNewDHIS2TokenWrapper(String username, String password) {
+    public static DhisTokenWrapper getNewDHIS2TokenWrapper(String username, String password) {
         try {
             String url = getUrl();
             String basicAuthorization = getBasicAuthorization();
@@ -65,7 +65,7 @@ public class DHIS2TokenUtility {
         }
     }
 
-    public static DHIS2TokenWrapper getRefreshedDHIS2TokenWrapper(String refreshToken) {
+    public static DhisTokenWrapper getRefreshedDHIS2TokenWrapper(String refreshToken) {
         try {
             String url = getUrl();
             String basicAuthorization = getBasicAuthorization();
@@ -92,8 +92,8 @@ public class DHIS2TokenUtility {
         return basicAuthorization;
     }
 
-    private static DHIS2TokenWrapper toTokenWrapper(String responseBody) {
-        DHIS2TokenWrapper tokenWrapper = new DHIS2TokenWrapper();
+    private static DhisTokenWrapper toTokenWrapper(String responseBody) {
+        DhisTokenWrapper tokenWrapper = new DhisTokenWrapper();
         JSONObject jsonObject = new JSONObject(responseBody);
         tokenWrapper.setAccessToken(jsonObject.getString("access_token"));
         tokenWrapper.setRefreshToken(jsonObject.getString("refresh_token"));
@@ -107,14 +107,14 @@ public class DHIS2TokenUtility {
         String accessToken = "";
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
-            if (authentication instanceof DHIS2Authentication) {
-                DHIS2Authentication dhis2Authentication = (DHIS2Authentication) authentication;
-                DHIS2TokenWrapper tokenWrapper = dhis2Authentication.getDhis2TokenWrapper();
+            if (authentication instanceof DhisAuthentication) {
+                DhisAuthentication dhis2Authentication = (DhisAuthentication) authentication;
+                DhisTokenWrapper tokenWrapper = dhis2Authentication.getDhis2TokenWrapper();
                 if (tokenWrapper != null) {
                     if (tokenWrapper.isExpired() || tokenWrapper.isAboutToExpire()) {
-                        DHIS2TokenWrapper newTokenWrapper = DHIS2TokenUtility.getRefreshedDHIS2TokenWrapper(tokenWrapper.getRefreshToken());
+                        DhisTokenWrapper newTokenWrapper = DhisTokenUtility.getRefreshedDHIS2TokenWrapper(tokenWrapper.getRefreshToken());
                         accessToken = newTokenWrapper.getAccessToken();
-                        SecurityContextHolder.getContext().setAuthentication(DHIS2Authentication.valueOf(newTokenWrapper));
+                        SecurityContextHolder.getContext().setAuthentication(DhisAuthentication.valueOf(newTokenWrapper));
                     } else {
                         accessToken = tokenWrapper.getAccessToken();
                     }

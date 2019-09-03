@@ -24,7 +24,7 @@
 package ca.uhn.fhir.jpa.starter.custom;
 
 import ca.uhn.fhir.jpa.starter.HapiProperties;
-import static ca.uhn.fhir.jpa.starter.custom.DHIS2TokenUtility.getAccessTokenFromSecurityContext;
+import static ca.uhn.fhir.jpa.starter.custom.DhisTokenUtility.getAccessTokenFromSecurityContext;
 import ca.uhn.fhir.rest.api.server.RequestDetails;
 import ca.uhn.fhir.rest.server.interceptor.auth.AuthorizationInterceptor;
 import ca.uhn.fhir.rest.server.interceptor.auth.IAuthRule;
@@ -39,7 +39,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Charles Chigoriwa
  */
-public class DHIS2AuthInterceptor extends AuthorizationInterceptor {
+public class DhisAuthInterceptor extends AuthorizationInterceptor {
 
     private final Cache<String, Boolean> authorizationStore = Caffeine.newBuilder()
             .expireAfterWrite(60, TimeUnit.SECONDS)

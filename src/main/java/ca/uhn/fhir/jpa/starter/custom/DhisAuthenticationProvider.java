@@ -33,15 +33,15 @@ import org.springframework.security.core.AuthenticationException;
  *
  * @author Charles Chigoriwa
  */
-public class DHIS2AuthenticationProvider implements AuthenticationProvider {
+public class DhisAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String name = authentication.getName();
         String password = authentication.getCredentials().toString();
         try {
-            DHIS2TokenWrapper tokenWrapper = DHIS2TokenUtility.getNewDHIS2TokenWrapper(name, password);
-            return DHIS2Authentication.valueOf(tokenWrapper);
+            DhisTokenWrapper tokenWrapper = DhisTokenUtility.getNewDHIS2TokenWrapper(name, password);
+            return DhisAuthentication.valueOf(tokenWrapper);
         } catch (UnauthorizedApiException ex) {
             throw new BadCredentialsException("DHIS2  authentication failed");
         } 

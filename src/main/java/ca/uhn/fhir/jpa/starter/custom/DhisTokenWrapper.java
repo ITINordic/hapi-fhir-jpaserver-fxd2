@@ -33,7 +33,7 @@ import org.joda.time.Minutes;
  *
  * @author Charles Chigoriwa
  */
-public class DHIS2TokenWrapper implements Serializable{
+public class DhisTokenWrapper implements Serializable{
 
     private long creationTime = new Date().getTime();
     private String accessToken;
