@@ -42,7 +42,7 @@ import java.util.concurrent.TimeUnit;
 public class DhisAuthInterceptor extends AuthorizationInterceptor {
 
     private final Cache<String, Boolean> authorizationStore = Caffeine.newBuilder()
-            .expireAfterWrite(60, TimeUnit.SECONDS)
+            .expireAfterWrite(120, TimeUnit.SECONDS)
             .maximumSize(1000L).build();
 
     @Override
