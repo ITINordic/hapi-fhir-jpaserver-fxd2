@@ -2,7 +2,6 @@ package ca.uhn.fhir.jpa.starter.custom;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.jpa.starter.HapiProperties;
-import ca.uhn.fhir.model.primitive.BooleanDt;
 import ca.uhn.fhir.parser.JsonParser;
 import ca.uhn.fhir.parser.LenientErrorHandler;
 import ca.uhn.fhir.rest.api.RestOperationTypeEnum;
@@ -21,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.hl7.fhir.instance.model.api.IBaseExtension;
 import org.hl7.fhir.instance.model.api.IBaseHasExtensions;
 import org.hl7.fhir.instance.model.api.IBaseResource;
+import org.hl7.fhir.r4.model.BooleanType;
 import org.hl7.fhir.r4.model.Bundle;
 import org.springframework.http.HttpStatus;
 
@@ -139,7 +139,7 @@ public class CustomInterceptorAdapter extends InterceptorAdapter {
             extension = resourceWithExtension.addExtension();
             extension.setUrl(DHIS_SAVED_EXTENSION_URL);
         }
-        extension.setValue(new BooleanDt(saved));
+        extension.setValue(new BooleanType(saved));
 
     }
 
@@ -159,7 +159,7 @@ public class CustomInterceptorAdapter extends InterceptorAdapter {
         if (extension == null) {
             return true;
         } else {
-            return ((BooleanDt) extension.getValue()).getValue();
+            return ((BooleanType) extension.getValue()).getValue();
         }
     }
 
