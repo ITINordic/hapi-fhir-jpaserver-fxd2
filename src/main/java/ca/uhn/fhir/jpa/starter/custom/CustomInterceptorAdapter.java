@@ -33,7 +33,7 @@ public class CustomInterceptorAdapter extends InterceptorAdapter {
     protected final static String RESOURCE_BEFORE_UPDATE = "FrismResourceBeforeUpdate";
     protected final static String FRISM_HINT = "FrismHint";
     protected final static String NO_DHIS_SAVE = "NO_DHIS_SAVE";
-    protected final static String DHIS_SAVED_EXTENSION_URL = "urn:dhis:saved";
+    protected final static String DHIS_SAVED_EXTENSION_URL = "dhis/resource/saved";
     protected final static String AUTHORIZATION_HEADER="Authorization";
 
     protected IGenericClient getFhirClient(FhirContext fhirContext, String authorization) {
