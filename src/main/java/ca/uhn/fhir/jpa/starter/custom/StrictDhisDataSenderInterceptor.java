@@ -23,16 +23,22 @@
  **/
 package ca.uhn.fhir.jpa.starter.custom;
 
+import ca.uhn.fhir.context.FhirContext;
+import static ca.uhn.fhir.jpa.starter.custom.CustomInterceptorAdapter.FRISM_HINT;
+import ca.uhn.fhir.rest.api.RestOperationTypeEnum;
 import ca.uhn.fhir.rest.api.server.RequestDetails;
 import ca.uhn.fhir.rest.api.server.ResponseDetails;
+import ca.uhn.fhir.rest.client.api.IGenericClient;
+import java.util.Collections;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.hl7.fhir.instance.model.api.IBaseResource;
 
 /**
  *
  * @author Charles Chigoriwa
  */
-public class StrictDhisDataSenderInterceptor extends DhisDataSenderInterceptor {
+public class StrictDhisDataSenderInterceptor extends AbstractDhisDataSenderInterceptor {
 
     @Override
     protected boolean handleAdapterError(AdapterResource adapterResource, RequestDetails theRequestDetails, ResponseDetails theResponseDetails, HttpServletRequest theServletRequest, HttpServletResponse theServletResponse) {
@@ -43,4 +49,43 @@ public class StrictDhisDataSenderInterceptor extends DhisDataSenderInterceptor {
     protected boolean checkIfAdapterAndDhisAreRunning() {
         return true;
     }
+
+    protected boolean strictErrorHandling(RequestDetails theRequestDetails, ResponseDetails theResponseDetails, HttpServletRequest theServletRequest, HttpServletResponse theServletResponse) {
+        RestOperationTypeEnum restOperationType = theRequestDetails.getRestOperationType();
+        if (restOperationType.equals(RestOperationTypeEnum.CREATE)) {
+            deleteResource(theRequestDetails, theResponseDetails);
+            createBadRequestResponse(theServletResponse, "Failed to save data in dhis. FhirResource deleted.");
+        } else {
+            revertResourceToBeforeUpdate(theRequestDetails);
+            createBadRequestResponse(theServletResponse, "Failed to save data in dhis. Reverted to previous resource version.");
+        }
+        return false;
+    }
+
+    @Override
+    protected boolean storeResourceBeforeUpdate() {
+        return true;
+    }
+
+    protected void revertResourceToBeforeUpdate(RequestDetails theRequestDetails) {
+        Object objectBeforeUpdate = theRequestDetails.getUserData().get(RESOURCE_BEFORE_UPDATE);
+        if (objectBeforeUpdate != null && objectBeforeUpdate instanceof IBaseResource) {
+            IBaseResource resourceBeforeUpdate = (IBaseResource) objectBeforeUpdate;
+            String authorization = theRequestDetails.getHeader(AUTHORIZATION_HEADER);
+            FhirContext fhirContext = theRequestDetails.getFhirContext();
+            IGenericClient client = getFhirClient(fhirContext, authorization, Collections.singletonMap(FRISM_HINT, NO_DHIS_SAVE));
+            client.update().resource(resourceBeforeUpdate).execute();
+        }
+    }
+    
+    protected void deleteResource(RequestDetails theRequestDetails, ResponseDetails theResponseDetails) {
+        IBaseResource resource = theResponseDetails.getResponseResource();
+        String authorization = theRequestDetails.getHeader(AUTHORIZATION_HEADER);
+        FhirContext fhirContext = theRequestDetails.getFhirContext();
+        IGenericClient client = getFhirClient(fhirContext, authorization, Collections.singletonMap(FRISM_HINT, NO_DHIS_SAVE));
+        client.delete()
+                .resource(resource)
+                .execute();
+    }
+
 }

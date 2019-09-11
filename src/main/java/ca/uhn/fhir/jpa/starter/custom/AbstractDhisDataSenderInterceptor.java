@@ -42,9 +42,9 @@ import org.slf4j.LoggerFactory;
  *
  * @author Charles Chigoriwa
  */
-public abstract class DhisDataSenderInterceptor extends CustomInterceptorAdapter {
+public abstract class AbstractDhisDataSenderInterceptor extends CustomInterceptorAdapter {
 
-    protected static Logger logger = LoggerFactory.getLogger(DhisDataSenderInterceptor.class);
+    protected static Logger logger = LoggerFactory.getLogger(AbstractDhisDataSenderInterceptor.class);
 
     //This method is called just before the actual implementing server method is invoked.
     @Override
@@ -82,16 +82,18 @@ public abstract class DhisDataSenderInterceptor extends CustomInterceptorAdapter
         }
 
         if (theOperation.equals(RestOperationTypeEnum.UPDATE)) {
-            String authorization = theRequestDetails.getHeader("Authorization");
-            String resourceName = theRequestDetails.getResourceName();
-            FhirContext fhirContext = theRequestDetails.getFhirContext();
-            IBaseResource resource = theProcessedRequest.getResource();
-            IGenericClient client = getFhirClient(fhirContext, authorization, Collections.singletonMap(FRISM_HINT, NO_DHIS_SAVE));
-            Bundle response = client.search().byUrl(resourceName + "/" + resource.getIdElement().getIdPart())
-                    .returnBundle(Bundle.class).execute();
-            if (!GeneralUtility.isEmpty(response.getEntry())) {
-                IBaseResource resourceBeforeUpdate = response.getEntry().get(0).getResource();
-                theRequestDetails.getUserData().put(RESOURCE_BEFORE_UPDATE, resourceBeforeUpdate);
+            if (storeResourceBeforeUpdate()) {
+                String authorization = theRequestDetails.getHeader("Authorization");
+                String resourceName = theRequestDetails.getResourceName();
+                FhirContext fhirContext = theRequestDetails.getFhirContext();
+                IBaseResource resource = theProcessedRequest.getResource();
+                IGenericClient client = getFhirClient(fhirContext, authorization, Collections.singletonMap(FRISM_HINT, NO_DHIS_SAVE));
+                Bundle response = client.search().byUrl(resourceName + "/" + resource.getIdElement().getIdPart())
+                        .returnBundle(Bundle.class).execute();
+                if (!GeneralUtility.isEmpty(response.getEntry())) {
+                    IBaseResource resourceBeforeUpdate = response.getEntry().get(0).getResource();
+                    theRequestDetails.getUserData().put(RESOURCE_BEFORE_UPDATE, resourceBeforeUpdate);
+                }
             }
         }
     }
@@ -149,5 +151,8 @@ public abstract class DhisDataSenderInterceptor extends CustomInterceptorAdapter
     }
 
     protected abstract boolean handleAdapterError(AdapterResource adapterResource, RequestDetails theRequestDetails, ResponseDetails theResponseDetails, HttpServletRequest theServletRequest, HttpServletResponse theServletResponse);
+
     protected abstract boolean checkIfAdapterAndDhisAreRunning();
+
+    protected abstract boolean storeResourceBeforeUpdate();
 }

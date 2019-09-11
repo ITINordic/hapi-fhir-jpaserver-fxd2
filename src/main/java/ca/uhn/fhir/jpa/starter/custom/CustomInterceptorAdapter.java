@@ -50,26 +50,8 @@ public class CustomInterceptorAdapter extends InterceptorAdapter {
         return client;
     }
 
-    protected void deleteResource(RequestDetails theRequestDetails, ResponseDetails theResponseDetails) {
-        IBaseResource resource = theResponseDetails.getResponseResource();
-        String authorization = theRequestDetails.getHeader(AUTHORIZATION_HEADER);
-        FhirContext fhirContext = theRequestDetails.getFhirContext();
-        IGenericClient client = getFhirClient(fhirContext, authorization, Collections.singletonMap(FRISM_HINT, NO_DHIS_SAVE));
-        client.delete()
-                .resource(resource)
-                .execute();
-    }
-
-    protected void revertResourceToBeforeUpdate(RequestDetails theRequestDetails) {
-        Object objectBeforeUpdate = theRequestDetails.getUserData().get(RESOURCE_BEFORE_UPDATE);
-        if (objectBeforeUpdate != null && objectBeforeUpdate instanceof IBaseResource) {
-            IBaseResource resourceBeforeUpdate = (IBaseResource) objectBeforeUpdate;
-            String authorization = theRequestDetails.getHeader(AUTHORIZATION_HEADER);
-            FhirContext fhirContext = theRequestDetails.getFhirContext();
-            IGenericClient client = getFhirClient(fhirContext, authorization, Collections.singletonMap(FRISM_HINT, NO_DHIS_SAVE));
-            client.update().resource(resourceBeforeUpdate).execute();
-        }
-    }
+    
+   
 
     protected void saveAsDhisSaved(RequestDetails theRequestDetails, ResponseDetails theResponseDetails) {
         IBaseResource resource = theResponseDetails.getResponseResource();
@@ -191,34 +173,7 @@ public class CustomInterceptorAdapter extends InterceptorAdapter {
         return adapterResource;
     }
 
-    protected boolean strictErrorHandling(RequestDetails theRequestDetails, ResponseDetails theResponseDetails, HttpServletRequest theServletRequest, HttpServletResponse theServletResponse) {
-        RestOperationTypeEnum restOperationType = theRequestDetails.getRestOperationType();
-        if (restOperationType.equals(RestOperationTypeEnum.CREATE)) {
-            deleteResource(theRequestDetails, theResponseDetails);
-            createBadRequestResponse(theServletResponse, "Failed to save data in dhis. FhirResource deleted.");
-        } else {
-            revertResourceToBeforeUpdate(theRequestDetails);
-            createBadRequestResponse(theServletResponse, "Failed to save data in dhis. Reverted to previous resource version.");
-        }
-        return false;
-    }
 
-    protected boolean lenientErrorHandling(AdapterResource adapterResource, RequestDetails theRequestDetails, ResponseDetails theResponseDetails, HttpServletRequest theServletRequest, HttpServletResponse theServletResponse) {
-        String clientId = adapterResource.getClientId();
-        String clientResourceId = adapterResource.getClientResourceId();
-        String resourceId = adapterResource.getResourceId();
-        String resourceInString = adapterResource.getResourceInString();
-        String resourceType = adapterResource.getResourceType();
-        String url = "/remote-fhir-rest-hook/" + clientId + "/" + clientResourceId + "/" + resourceType + "/" + resourceId;
-        String baseUrl = adapterResource.getBaseUrl();
-        url = baseUrl + url;
-        String authorization = "Bearer jhsj832jDShf8ehShdu7ejhDhsilwmdsgs";
-        try {
-            CustomHttpUtility.httpPost(url, resourceInString, authorization, Collections.singletonMap("Content-Type", "application/json"));
-        } catch (IOException | ApiException ex) {
-            //Ignore this error
-        }
-        return true;
-    }
+   
 
 }
