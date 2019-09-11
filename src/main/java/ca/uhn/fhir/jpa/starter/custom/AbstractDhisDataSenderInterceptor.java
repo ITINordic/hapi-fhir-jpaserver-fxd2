@@ -88,7 +88,7 @@ public abstract class AbstractDhisDataSenderInterceptor extends CustomIntercepto
                 FhirContext fhirContext = theRequestDetails.getFhirContext();
                 IBaseResource resource = theProcessedRequest.getResource();
                 IGenericClient client = getFhirClient(fhirContext, authorization, Collections.singletonMap(FRISM_HINT, NO_DHIS_SAVE));
-                Bundle response = client.search().byUrl(resourceName + "/" + resource.getIdElement().getIdPart())
+                Bundle response = client.search().byUrl(resourceName + "?_id=" + resource.getIdElement().getIdPart())
                         .returnBundle(Bundle.class).execute();
                 if (!GeneralUtility.isEmpty(response.getEntry())) {
                     IBaseResource resourceBeforeUpdate = response.getEntry().get(0).getResource();
