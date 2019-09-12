@@ -119,11 +119,9 @@ public class CustomHttpUtility {
         if (entity != null) {
             try (InputStream instream = entity.getContent()) {
                 content = IOUtils.toString(instream, "UTF-8");
-                System.out.println("Content=" + content);
             }
         }
         int statusCode = response.getStatusLine().getStatusCode();
-        System.out.println("StatusCode=" + statusCode);
         if (statusCode == 401 || statusCode == 403) {
             throw new UnauthorizedApiException(String.valueOf(statusCode), content);
         } else if (statusCode >= 300) {
