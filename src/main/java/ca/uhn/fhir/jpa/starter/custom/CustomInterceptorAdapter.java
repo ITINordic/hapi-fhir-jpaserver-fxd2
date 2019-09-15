@@ -31,12 +31,13 @@ public class CustomInterceptorAdapter extends InterceptorAdapter {
     protected final static String RESOURCE_BEFORE_UPDATE = "FrismResourceBeforeUpdate";
     protected final static String FRISM_HINT = "FrismHint";
     protected final static String NO_DHIS_SAVE = "NO_DHIS_SAVE";
-    protected final static String DHIS_SAVED_EXTENSION_URL = "dhis/resource/saved";
-    protected final static String AUTHORIZATION_HEADER="Authorization";
+    protected final static String DHIS_SAVED_EXTENSION_URL = "dhis/resource/express/saved";
+    protected final static String AUTHORIZATION_HEADER = "Authorization";
+    protected final static String DEFAULT_CUSTOM_LOCAL_SERVER = "http://localhost:8080/hapi-fhir-jpaserver/fhir/";
+    protected final static String DEFAULT_ADAPTER_BASE_URL = "http://localhost:8081";
 
     protected IGenericClient getFhirClient(FhirContext fhirContext, String authorization) {
-        String customLocalServerAddress = HapiProperties.getCustomLocalServerAddress();
-        customLocalServerAddress = GeneralUtility.isEmpty(customLocalServerAddress) ? "http://localhost:8080/hapi-fhir-jpaserver/fhir/" : customLocalServerAddress;
+        String customLocalServerAddress = getCustomerLocalFhirAddress();
         IGenericClient client = fhirContext.newRestfulGenericClient(customLocalServerAddress);
         client.registerInterceptor(new CustomClientAuthInterceptor(authorization));
         return client;
@@ -47,9 +48,6 @@ public class CustomInterceptorAdapter extends InterceptorAdapter {
         client.registerInterceptor(new CustomClientHeaderInterceptor(headers));
         return client;
     }
-
-    
-   
 
     protected void saveAsDhisSaved(RequestDetails theRequestDetails, ResponseDetails theResponseDetails) {
         IBaseResource resource = theResponseDetails.getResponseResource();
@@ -73,13 +71,24 @@ public class CustomInterceptorAdapter extends InterceptorAdapter {
         }
     }
 
-    protected boolean isAdapterAndItsDhisRunning(String authorization) {
+    protected boolean isAuthorizedByAdapter(String authorization) {
         String url = "/remote-fhir-express/authenticated";
-        String baseUrl = HapiProperties.getCustomDhisFhirAdapterBaseUrl();
-        baseUrl = GeneralUtility.isEmpty(baseUrl) ? "http://localhost:8081" : baseUrl;
-        url = baseUrl + url;
+        String adapterBaseUrl = getAdapterBaseUrl();
+        url = adapterBaseUrl + url;
         try {
             CustomHttpUtility.httpGet(url, authorization);
+            return true;
+        } catch (IOException | ApiException ex) {
+            return false;
+        }
+    }
+
+    protected boolean isAdapterRunning() {
+        String url = "/remote-fhir-express/runningAdapter";
+        String adapterBaseUrl = getAdapterBaseUrl();
+        url = adapterBaseUrl + url;
+        try {
+            CustomHttpUtility.httpGet(url);
             return true;
         } catch (IOException | ApiException ex) {
             return false;
@@ -93,7 +102,7 @@ public class CustomInterceptorAdapter extends InterceptorAdapter {
         IGenericClient client = getFhirClient(fhirContext, authorization, Collections.singletonMap(FRISM_HINT, NO_DHIS_SAVE));
         Bundle response = client.history().onInstance(resourceBeforeUpdate.getIdElement())
                 .andReturnBundle(Bundle.class).count(1000).since(resourceBeforeUpdate.getMeta().getLastUpdated()).execute();
-       
+
         List<IBaseResource> resources = new ArrayList<>();
         if (!GeneralUtility.isEmpty(response.getEntry())) {
             response.getEntry().forEach((entry) -> {
@@ -164,14 +173,22 @@ public class CustomInterceptorAdapter extends InterceptorAdapter {
             adapterResource.setResourceId(resource.getIdElement().getIdPart());
             adapterResource.setResourceInString(jsonParser.encodeResourceToString(resource));
             adapterResource.setResourceType(resourceClassName);
-            String baseUrl = HapiProperties.getCustomDhisFhirAdapterBaseUrl();
-            baseUrl = GeneralUtility.isEmpty(baseUrl) ? "http://localhost:8081" : baseUrl;
-            adapterResource.setBaseUrl(baseUrl);
+            String adapterBaseUrl = getAdapterBaseUrl();
+            adapterResource.setBaseUrl(adapterBaseUrl);
         }
         return adapterResource;
     }
 
+    protected String getAdapterBaseUrl() {
+        String adapterBaseUrl = HapiProperties.getCustomDhisFhirAdapterBaseUrl();
+        adapterBaseUrl = GeneralUtility.isEmpty(adapterBaseUrl) ? DEFAULT_ADAPTER_BASE_URL : adapterBaseUrl;
+        return adapterBaseUrl;
+    }
 
-   
+    protected String getCustomerLocalFhirAddress() {
+        String customLocalServerAddress = HapiProperties.getCustomLocalServerAddress();
+        customLocalServerAddress = GeneralUtility.isEmpty(customLocalServerAddress) ? DEFAULT_CUSTOM_LOCAL_SERVER : customLocalServerAddress;
+        return customLocalServerAddress;
+    }
 
 }

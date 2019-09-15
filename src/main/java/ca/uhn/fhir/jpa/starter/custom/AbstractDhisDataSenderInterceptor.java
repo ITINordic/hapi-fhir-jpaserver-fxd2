@@ -56,12 +56,18 @@ public abstract class AbstractDhisDataSenderInterceptor extends CustomIntercepto
         }
 
         if (restOperationType.equals(RestOperationTypeEnum.CREATE) || restOperationType.equals(RestOperationTypeEnum.UPDATE)) {
-            if (checkIfAdapterAndDhisAreRunning()) {
+            if (checkIfAuthorizedByAdapter()) {
                 String authorization = theRequestDetails.getHeader("Authorization");
-                if (isAdapterAndItsDhisRunning(authorization)) {
+                if (isAuthorizedByAdapter(authorization)) {
                     return true;
                 } else {
                     throw new CustomAbortException(500, "Fhir Adapter and/or its Dhis are not running");
+                }
+            } else if (checkIfAdapterIsRunning()) {
+                if (isAdapterRunning()) {
+                    return true;
+                } else {
+                    throw new CustomAbortException(500, "Adapter is not running.");
                 }
             }
         }
@@ -152,7 +158,9 @@ public abstract class AbstractDhisDataSenderInterceptor extends CustomIntercepto
 
     protected abstract boolean handleAdapterError(AdapterResource adapterResource, RequestDetails theRequestDetails, ResponseDetails theResponseDetails, HttpServletRequest theServletRequest, HttpServletResponse theServletResponse);
 
-    protected abstract boolean checkIfAdapterAndDhisAreRunning();
+    protected abstract boolean checkIfAuthorizedByAdapter();
 
     protected abstract boolean storeResourceBeforeUpdate();
+
+    protected abstract boolean checkIfAdapterIsRunning();
 }

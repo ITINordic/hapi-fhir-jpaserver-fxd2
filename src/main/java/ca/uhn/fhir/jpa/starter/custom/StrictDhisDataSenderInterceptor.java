@@ -42,15 +42,6 @@ public class StrictDhisDataSenderInterceptor extends AbstractDhisDataSenderInter
 
     @Override
     protected boolean handleAdapterError(AdapterResource adapterResource, RequestDetails theRequestDetails, ResponseDetails theResponseDetails, HttpServletRequest theServletRequest, HttpServletResponse theServletResponse) {
-        return strictErrorHandling(theRequestDetails, theResponseDetails, theServletRequest, theServletResponse);
-    }
-
-    @Override
-    protected boolean checkIfAdapterAndDhisAreRunning() {
-        return true;
-    }
-
-    protected boolean strictErrorHandling(RequestDetails theRequestDetails, ResponseDetails theResponseDetails, HttpServletRequest theServletRequest, HttpServletResponse theServletResponse) {
         RestOperationTypeEnum restOperationType = theRequestDetails.getRestOperationType();
         if (restOperationType.equals(RestOperationTypeEnum.CREATE)) {
             deleteResource(theRequestDetails, theResponseDetails);
@@ -60,6 +51,11 @@ public class StrictDhisDataSenderInterceptor extends AbstractDhisDataSenderInter
             createBadRequestResponse(theServletResponse, "Failed to save data in dhis. Reverted to previous resource version.");
         }
         return false;
+    }
+
+    @Override
+    protected boolean checkIfAuthorizedByAdapter() {
+        return true;
     }
 
     @Override
@@ -77,7 +73,7 @@ public class StrictDhisDataSenderInterceptor extends AbstractDhisDataSenderInter
             client.update().resource(resourceBeforeUpdate).execute();
         }
     }
-    
+
     protected void deleteResource(RequestDetails theRequestDetails, ResponseDetails theResponseDetails) {
         IBaseResource resource = theResponseDetails.getResponseResource();
         String authorization = theRequestDetails.getHeader(AUTHORIZATION_HEADER);
@@ -86,6 +82,11 @@ public class StrictDhisDataSenderInterceptor extends AbstractDhisDataSenderInter
         client.delete()
                 .resource(resource)
                 .execute();
+    }
+
+    @Override
+    protected boolean checkIfAdapterIsRunning() {
+        return true;
     }
 
 }

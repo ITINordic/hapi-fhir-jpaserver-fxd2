@@ -15,15 +15,6 @@ public class LenientDhisDataSenderInterceptor extends AbstractDhisDataSenderInte
 
     @Override
     protected boolean handleAdapterError(AdapterResource adapterResource, RequestDetails theRequestDetails, ResponseDetails theResponseDetails, HttpServletRequest theServletRequest, HttpServletResponse theServletResponse) {
-        return lenientErrorHandling(adapterResource, theRequestDetails, theResponseDetails, theServletRequest, theServletResponse);
-    }
-
-    @Override
-    protected boolean checkIfAdapterAndDhisAreRunning() {
-        return false;
-    }
-
-    protected boolean lenientErrorHandling(AdapterResource adapterResource, RequestDetails theRequestDetails, ResponseDetails theResponseDetails, HttpServletRequest theServletRequest, HttpServletResponse theServletResponse) {
         String clientId = adapterResource.getClientId();
         String clientResourceId = adapterResource.getClientResourceId();
         String resourceId = adapterResource.getResourceId();
@@ -42,8 +33,18 @@ public class LenientDhisDataSenderInterceptor extends AbstractDhisDataSenderInte
     }
 
     @Override
+    protected boolean checkIfAuthorizedByAdapter() {
+        return false;
+    }
+
+    @Override
     protected boolean storeResourceBeforeUpdate() {
         return false;
+    }
+
+    @Override
+    protected boolean checkIfAdapterIsRunning() {
+        return true;
     }
 
 }

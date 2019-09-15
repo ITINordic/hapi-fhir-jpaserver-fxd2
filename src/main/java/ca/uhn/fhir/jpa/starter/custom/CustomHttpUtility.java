@@ -112,6 +112,10 @@ public class CustomHttpUtility {
     public static String httpGet(String url, String authorization) throws UnsupportedEncodingException, IOException {
         return httpGet(url, authorization, null);
     }
+    
+    public static String httpGet(String url) throws UnsupportedEncodingException, IOException {
+        return httpGet(url, null);
+    }
 
     private static String parseStringContent(HttpResponse response) throws IOException {
         String content = "";
