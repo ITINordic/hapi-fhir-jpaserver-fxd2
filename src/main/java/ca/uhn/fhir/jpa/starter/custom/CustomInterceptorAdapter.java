@@ -57,7 +57,6 @@ public class CustomInterceptorAdapter extends InterceptorAdapter {
             FhirContext fhirContext = theRequestDetails.getFhirContext();
             IGenericClient client = getFhirClient(fhirContext, authorization, Collections.singletonMap(FRISM_HINT, NO_DHIS_SAVE));
             resource.setId(client.update().resource(resource).execute().getId());
-            theResponseDetails.setResponseResource(resource);
         }
     }
 
