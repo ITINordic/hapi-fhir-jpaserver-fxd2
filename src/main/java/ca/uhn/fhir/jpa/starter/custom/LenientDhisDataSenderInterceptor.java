@@ -8,7 +8,6 @@ import ca.uhn.fhir.rest.client.api.IGenericClient;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ForkJoinPool;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.hl7.fhir.instance.model.api.IBaseExtension;
