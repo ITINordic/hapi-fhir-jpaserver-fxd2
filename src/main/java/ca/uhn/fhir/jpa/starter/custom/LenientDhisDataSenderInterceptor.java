@@ -26,16 +26,16 @@ public class LenientDhisDataSenderInterceptor extends AbstractDhisDataSenderInte
     
     protected final static String SUBSCRIPTION_EXTENSION_URL = "adapter/subscription/status";
     
-    private final ForkJoinPool dhisSaveForkJoinPool=new ForkJoinPool();
+    //private final ForkJoinPool dhisSaveForkJoinPool=new ForkJoinPool();
     
     
-     @Override
+    /*@Override
      protected boolean saveInDhisViaAdapter(RequestDetails theRequestDetails, ResponseDetails theResponseDetails, HttpServletRequest theServletRequest, HttpServletResponse theServletResponse){
          dhisSaveForkJoinPool.submit(()->{             
              super.saveInDhisViaAdapter(theRequestDetails, theResponseDetails, theServletRequest, theServletResponse);         
          });
          return true;
-     }
+     }*/
     
     
     @Override
