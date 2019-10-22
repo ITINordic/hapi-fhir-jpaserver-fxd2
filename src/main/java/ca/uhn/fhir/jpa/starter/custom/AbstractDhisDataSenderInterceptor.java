@@ -117,7 +117,14 @@ public abstract class AbstractDhisDataSenderInterceptor extends CustomIntercepto
 
         RestOperationTypeEnum restOperationType = theRequestDetails.getRestOperationType();
         if (restOperationType.equals(RestOperationTypeEnum.CREATE) || restOperationType.equals(RestOperationTypeEnum.UPDATE)) {
-            IBaseResource resource = theResponseDetails.getResponseResource();
+           return saveInDhisViaAdapter(theRequestDetails, theResponseDetails, theServletRequest, theServletResponse);
+        }
+        return true;
+
+    }
+    
+    protected boolean saveInDhisViaAdapter(RequestDetails theRequestDetails, ResponseDetails theResponseDetails, HttpServletRequest theServletRequest, HttpServletResponse theServletResponse){
+        IBaseResource resource = theResponseDetails.getResponseResource();
             if (resource != null) {
                 AdapterResource adapterResource = createAdapterResource(theRequestDetails, theResponseDetails);
                 String clientResourceId = adapterResource.getClientResourceId();
@@ -150,10 +157,7 @@ public abstract class AbstractDhisDataSenderInterceptor extends CustomIntercepto
                 }
 
             }
-
-        }
-        return true;
-
+            return true;
     }
 
     protected abstract boolean handleAdapterError(AdapterResource adapterResource, RequestDetails theRequestDetails, ResponseDetails theResponseDetails, HttpServletRequest theServletRequest, HttpServletResponse theServletResponse);
