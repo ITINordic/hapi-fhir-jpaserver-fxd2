@@ -20,21 +20,9 @@ import org.hl7.fhir.r4.model.StringType;
  * @author Charles Chigoriwa
  */
 public class LenientDhisDataSenderInterceptor extends AbstractDhisDataSenderInterceptor {
-
     
     
     protected final static String SUBSCRIPTION_EXTENSION_URL = "adapter/subscription/status";
-    
-    //private final ForkJoinPool dhisSaveForkJoinPool=new ForkJoinPool();
-    
-    
-    /*@Override
-     protected boolean saveInDhisViaAdapter(RequestDetails theRequestDetails, ResponseDetails theResponseDetails, HttpServletRequest theServletRequest, HttpServletResponse theServletResponse){
-         dhisSaveForkJoinPool.submit(()->{             
-             super.saveInDhisViaAdapter(theRequestDetails, theResponseDetails, theServletRequest, theServletResponse);         
-         });
-         return true;
-     }*/
     
     
     @Override

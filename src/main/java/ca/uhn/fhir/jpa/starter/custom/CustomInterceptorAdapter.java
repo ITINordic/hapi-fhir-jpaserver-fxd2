@@ -7,6 +7,7 @@ import ca.uhn.fhir.parser.LenientErrorHandler;
 import ca.uhn.fhir.rest.api.server.RequestDetails;
 import ca.uhn.fhir.rest.api.server.ResponseDetails;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
+import ca.uhn.fhir.rest.server.exceptions.BaseServerResponseException;
 import ca.uhn.fhir.rest.server.interceptor.InterceptorAdapter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,6 +15,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Nonnull;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.hl7.fhir.instance.model.api.IBaseExtension;
 import org.hl7.fhir.instance.model.api.IBaseHasExtensions;
@@ -33,8 +36,14 @@ public class CustomInterceptorAdapter extends InterceptorAdapter {
     protected final static String NO_DHIS_SAVE = "NO_DHIS_SAVE";
     protected final static String DHIS_SAVED_EXTENSION_URL = "dhis/resource/express/saved";
     protected final static String AUTHORIZATION_HEADER = "Authorization";
-    protected final static String DEFAULT_CUSTOM_LOCAL_SERVER = "http://localhost:8080/hapi-fhir-jpaserver/fhir/";
+    protected final static String DEFAULT_CUSTOM_LOCAL_SERVER = "http://localhost:8080/hapifhir/fhir/";
     protected final static String DEFAULT_ADAPTER_BASE_URL = "http://localhost:8081";
+
+    @Override
+    public boolean handleException(RequestDetails theRequestDetails, BaseServerResponseException theException, HttpServletRequest theServletRequest, HttpServletResponse theServletResponse)
+            throws ServletException, IOException {
+        return false;
+    }
 
     protected IGenericClient getFhirClient(FhirContext fhirContext, String authorization) {
         String customLocalServerAddress = getCustomerLocalFhirAddress();
