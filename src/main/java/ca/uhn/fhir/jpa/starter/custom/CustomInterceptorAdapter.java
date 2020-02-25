@@ -171,7 +171,7 @@ public class CustomInterceptorAdapter extends InterceptorAdapter {
         } else if (resourceClassName.equalsIgnoreCase("carePlan")) {
             clientResourceId = "b28e733c-8aee-11e9-9928-4736812fb4de";
         } else if (resourceClassName.equalsIgnoreCase("questionnaireResponse")) {
-            clientResourceId = "056c3922-8e64-11e9-a6cb-6ba3fca8a311";
+            clientResourceId = "21afaaa0-57cd-11ea-96a7-cbf49cf9cfd1";
         }
 
         adapterResource.setClientResourceId(clientResourceId);
