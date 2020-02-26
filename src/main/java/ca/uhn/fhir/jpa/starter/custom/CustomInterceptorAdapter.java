@@ -167,18 +167,18 @@ public class CustomInterceptorAdapter extends InterceptorAdapter {
         String resourceClassName = resource.getClass().getSimpleName();
         String clientResourceId = null;
         if (resourceClassName.equalsIgnoreCase("patient")) {
-            clientResourceId = "667bfa41-867c-4796-86b6-eb9f9ed4dc94";
+            clientResourceId = HapiProperties.getCustomDhisFhirAdapterPatientClientResourceId();
         } else if (resourceClassName.equalsIgnoreCase("carePlan")) {
-            clientResourceId = "b28e733c-8aee-11e9-9928-4736812fb4de";
+            clientResourceId = HapiProperties.getCustomDhisFhirAdapterCarePlanClientResourceId();
         } else if (resourceClassName.equalsIgnoreCase("questionnaireResponse")) {
-            clientResourceId = "21afaaa0-57cd-11ea-96a7-cbf49cf9cfd1";
+            clientResourceId = HapiProperties.getCustomDhisFhirAdapterQuestionnaireClientResourceId();
         }
 
         adapterResource.setClientResourceId(clientResourceId);
         if (!GeneralUtility.isEmpty(clientResourceId)) {
             FhirContext fhirContext = theRequestDetails.getFhirContext();
             JsonParser jsonParser = new JsonParser(fhirContext, new LenientErrorHandler());
-            adapterResource.setClientId("73cd99c5-0ca8-42ad-a53b-1891fccce08f");
+            adapterResource.setClientId(HapiProperties.getCustomDhisFhirAdapterClientId());
             adapterResource.setResourceId(resource.getIdElement().getIdPart());
             adapterResource.setResourceInString(jsonParser.encodeResourceToString(resource));
             adapterResource.setResourceType(resourceClassName);

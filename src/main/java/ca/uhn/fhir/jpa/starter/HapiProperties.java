@@ -410,6 +410,22 @@ public class HapiProperties {
     public static String getCustomLocalServerAddress() {
         return HapiProperties.getProperty("custom.local.server_address");
     }
+    
+    public static String getCustomDhisFhirAdapterQuestionnaireClientResourceId() {
+        return HapiProperties.getProperty("custom.dhis.fhir.adapter.questionnaire_client_resource_id");
+    }
+    
+    public static String getCustomDhisFhirAdapterCarePlanClientResourceId() {
+        return HapiProperties.getProperty("custom.dhis.fhir.adapter.careplan_client_resource_id");
+    }
+    
+    public static String getCustomDhisFhirAdapterPatientClientResourceId() {
+        return HapiProperties.getProperty("custom.dhis.fhir.adapter.patient_client_resource_id");
+    }
+    
+    public static String getCustomDhisFhirAdapterClientId() {
+        return HapiProperties.getProperty("custom.dhis.fhir.adapter.patient_client_id");
+    }
 
     public static Long getReuseCachedSearchResultsMillis() {
         String value = HapiProperties.getProperty(REUSE_CACHED_SEARCH_RESULTS_MILLIS, "-1");
