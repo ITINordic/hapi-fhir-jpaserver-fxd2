@@ -34,7 +34,7 @@ public class CustomInterceptorAdapter extends InterceptorAdapter {
     protected final static String RESOURCE_BEFORE_UPDATE = "FrismResourceBeforeUpdate";
     protected final static String FRISM_HINT = "FrismHint";
     protected final static String NO_DHIS_SAVE = "NO_DHIS_SAVE";
-    protected final static String DHIS_SAVED_EXTENSION_URL = "dhis/resource/express/saved";
+    protected final static String DHIS_SAVED_EXTENSION_URL = "dhis/resource/saved";
     protected final static String AUTHORIZATION_HEADER = "Authorization";
     protected final static String DEFAULT_CUSTOM_LOCAL_SERVER = "http://localhost:8080/hapifhir/fhir/";
     protected final static String DEFAULT_ADAPTER_BASE_URL = "http://localhost:8081";
