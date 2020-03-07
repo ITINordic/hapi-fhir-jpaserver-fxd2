@@ -39,12 +39,7 @@ public class CustomInterceptorAdapter extends InterceptorAdapter {
     protected final static String DEFAULT_CUSTOM_LOCAL_SERVER = "http://localhost:8080/hapifhir/fhir/";
     protected final static String DEFAULT_ADAPTER_BASE_URL = "http://localhost:8081";
 
-    @Override
-    public boolean handleException(RequestDetails theRequestDetails, BaseServerResponseException theException, HttpServletRequest theServletRequest, HttpServletResponse theServletResponse)
-            throws ServletException, IOException {
-        return false;
-    }
-
+    
     protected IGenericClient getFhirClient(FhirContext fhirContext, String authorization) {
         String customLocalServerAddress = getCustomerLocalFhirAddress();
         IGenericClient client = fhirContext.newRestfulGenericClient(customLocalServerAddress);
