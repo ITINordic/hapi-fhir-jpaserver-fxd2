@@ -36,7 +36,6 @@ public class CustomInterceptorAdapter extends InterceptorAdapter {
     protected final static String DEFAULT_CUSTOM_LOCAL_SERVER = "http://localhost:8080/hapifhir/fhir/";
     protected final static String DEFAULT_ADAPTER_BASE_URL = "http://localhost:8081";
 
-    
     protected IGenericClient getFhirClient(FhirContext fhirContext, String authorization) {
         String customLocalServerAddress = getCustomerLocalFhirAddress();
         IGenericClient client = fhirContext.newRestfulGenericClient(customLocalServerAddress);
@@ -136,9 +135,13 @@ public class CustomInterceptorAdapter extends InterceptorAdapter {
     protected IBaseExtension getDhisSavedExtension(IBaseResource resource) {
         IBaseHasExtensions resourceWithExtension = (IBaseHasExtensions) resource;
         List<? extends IBaseExtension<?, ?>> extensions = resourceWithExtension.getExtension();
-        for (IBaseExtension extension : extensions) {
-            if (extension.getUrl().equals(DHIS_SAVED_EXTENSION_URL)) {
-                return extension;
+        if (extensions != null) {
+            for (IBaseExtension extension : extensions) {
+                if (extension != null && extension.getUrl() != null) {
+                    if (extension.getUrl().equals(DHIS_SAVED_EXTENSION_URL)) {
+                        return extension;
+                    }
+                }
             }
         }
         return null;
